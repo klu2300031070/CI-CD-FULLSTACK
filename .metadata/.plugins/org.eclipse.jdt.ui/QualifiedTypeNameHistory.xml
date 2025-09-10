@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="com.kelf.project.repository.BloodDonorRepository"/>
+    <fullyQualifiedTypeName name="com.kelf.project.repository.OrganRepository"/>
+    <fullyQualifiedTypeName name="com.kelf.project.repository.RequestBlooodRepisotory"/>
+    <fullyQualifiedTypeName name="com.kelf.project.repository.RequestOrganRepository"/>
+    <fullyQualifiedTypeName name="com.kelf.project.model.BloodDonor"/>
+    <fullyQualifiedTypeName name="com.kelf.project.model.OrganDonor"/>
+    <fullyQualifiedTypeName name="com.kelf.project.model.RequestBlood"/>
+    <fullyQualifiedTypeName name="com.kelf.project.model.RequestOrgan"/>
+</qualifiedTypeNameHistroy>
