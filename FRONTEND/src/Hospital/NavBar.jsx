@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import Login from '../hospital/Login'; // Assuming path
-import HospitalBloodRequest from './HospitalBloodRequest';
-import HospitalOrganRequest from './HospitalOrganRequest';
-import ViewAllBlood from './ViewAllBlood';
 import ViewAllOrgan from './ViewAllOrgan';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth } from '../contextapi/AuthContext';
+import BloodRequest from './BloodRequest';
+import BloodRequestStatus from './BloodRequestStatus';
+import BloodAvailability from './BloodAvailability';
 
 export default function NavBar() {
   const { setIsHospitalLoggedIn } = useAuth();
@@ -26,14 +26,14 @@ export default function NavBar() {
             Hospital Management System
           </Typography>
           <Box className="d-flex gap-3">
-            <Link to="/hospital-blood-request" className="text-decoration-none">
+            <Link to="/blood-request" className="text-decoration-none">
               <Button variant="contained" color="secondary">Blood Requests</Button>
             </Link>
-            <Link to="/hospital-organ-request" className="text-decoration-none">
-              <Button variant="contained" color="secondary">Organ Requests</Button>
+            <Link to="/blood-availability" className="text-decoration-none">
+              <Button variant="contained" color="secondary">Blood Availability</Button>
             </Link>
-            <Link to="/view-all-blood" className="text-decoration-none">
-              <Button variant="contained" color="secondary">View Blood</Button>
+            <Link to="/blood-request-status" className="text-decoration-none">
+              <Button variant="contained" color="secondary">Request Status</Button>
             </Link>
             <Link to="/view-all-organ" className="text-decoration-none">
               <Button variant="contained" color="secondary">View Organs</Button>
@@ -47,9 +47,9 @@ export default function NavBar() {
 
       {/* Page routing for hospital */}
       <Routes>
-        <Route path="/hospital-blood-request" element={<HospitalBloodRequest />} />
-        <Route path="/hospital-organ-request" element={<HospitalOrganRequest />} />
-        <Route path="/view-all-blood" element={<ViewAllBlood />} />
+        <Route path="/blood-request" element={<BloodRequest/>} />
+        <Route path="/blood-availability" element={<BloodAvailability/>} />
+        <Route path="/blood-request-status" element={<BloodRequestStatus />} />
         <Route path="/view-all-organ" element={<ViewAllOrgan />} />
         <Route path="/hospitallogin" element={<Login />} />
       </Routes>
