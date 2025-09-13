@@ -59,7 +59,7 @@ export default function ViewAllBlood() {
             <TableHead>
               <TableRow style={{ backgroundColor: '#1976d2' }}>
                 <TableCell style={{ color: '#fff' }}>Blood Bank Name</TableCell>
-                <TableCell style={{ color: '#fff' }}>Name</TableCell>
+                
                 <TableCell style={{ color: '#fff' }}>Phone</TableCell>
                 <TableCell style={{ color: '#fff' }}>Location</TableCell> {/* New Location column */}
               </TableRow>
@@ -68,9 +68,9 @@ export default function ViewAllBlood() {
               {bloodData.map((bank, index) => (
                 <TableRow key={index}>
                   <TableCell>{bank.org}</TableCell>
-                  <TableCell>{bank.fullName}</TableCell>
+                  
                   <TableCell>{bank.phoneno}</TableCell>
-                  <TableCell>{bank.location}</TableCell> {/* Location data */}
+                  <TableCell>{bank.location}</TableCell> 
                 </TableRow>
               ))}
             </TableBody>

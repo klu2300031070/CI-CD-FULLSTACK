@@ -7,6 +7,7 @@ import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/materi
 import 'bootstrap/dist/css/bootstrap.min.css'
 import BloodLogin from './BloodLogin'
 import { useAuth } from '../contextapi/AuthContext'
+import BloodBankRegistration from './bloodbankregistration'
 
 export default function BloodNavBar() {
   const { setIsBloodBankLoggedIn } = useAuth()
@@ -48,6 +49,7 @@ export default function BloodNavBar() {
           <Route path="/organaviaviablity" element={<BloodAviability />} />
           <Route path="/BloodRequest" element={<BloodRequest />} />
           <Route path="/bloodlogin" element={<BloodLogin />} />
+          <Route path='/bloodbankregister' element={<BloodBankRegistration/>} />
         </Routes>
       </Container>
     </>

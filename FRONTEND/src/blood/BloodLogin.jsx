@@ -4,7 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth } from '../contextapi/AuthContext'; // Import context
-import { useNavigate } from 'react-router-dom'; // Navigation
+import { useNavigate, Link } from 'react-router-dom'; // Navigation
 
 export default function BloodLogin() {
   const [loginData, setLoginData] = useState({ username: '', password: '' });
@@ -18,13 +18,12 @@ export default function BloodLogin() {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    console.log("Login Data:", loginData); // Check the login data being submitted
-    
+    console.log("Login Data:", loginData); 
     if (loginData.username === 'bank' && loginData.password === 'bank123') {
       toast.success('Login successful!');
 
-      // ✅ Store user info and update context
-      sessionStorage.setItem('Blood_user', JSON.stringify({ username: loginData.username }));  // Mock user data
+      
+      sessionStorage.setItem('Blood_user', JSON.stringify({ username: loginData.username })); 
       sessionStorage.setItem('isBloodBankLoggedIn', 'true');
       sessionStorage.setItem('isHospitalLoggedIn', 'false');
       sessionStorage.setItem('isOrganBankLoggedIn', 'false');
@@ -88,13 +87,14 @@ export default function BloodLogin() {
                 value={loginData.password}
                 onChange={handleChange}
                 required
-              />
+              /> <Link to="/bloodbankregister">Register here</Link>
               <Button type="submit" variant="contained" color="primary">Login</Button>
             </Box>
           </form>
         </CardContent>
       </Card>
       <ToastContainer position="top-center" autoClose={3000} />
+     
     </div>
   );
 }

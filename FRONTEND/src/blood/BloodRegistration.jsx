@@ -30,7 +30,7 @@ export default function BloodRegistration() {
       gender: form.gender,
       org: form.organization,
       age: form.age,
-      location: form.location // ✅ make sure this matches backend model
+      location: form.location 
     }
 
     try {
