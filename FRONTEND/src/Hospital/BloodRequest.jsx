@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -13,13 +12,14 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 import config from '../config';
 
 const BASE_URL = `${config.url}`;
 
 export default function BloodRequest() {
   const [form, setForm] = useState({
-    hospitalId: 1,
+    username: '',    
     bloodGroup: '',
     unitsNeeded: '',
     urgency: 'LOW',
@@ -27,6 +27,23 @@ export default function BloodRequest() {
     patientAge: '',
     patientInfo: ''
   });
+
+  const [submittedRequests, setSubmittedRequests] = useState([]);
+
+  useEffect(() => {
+    const usernameFromStorage = sessionStorage.getItem('username') || 'unknown_user';
+    setForm((prev) => ({ ...prev, username: usernameFromStorage }));
+    fetchRequests(usernameFromStorage);
+  }, []);
+
+  const fetchRequests = async (username) => {
+    try {
+      const res = await axios.get(`${BASE_URL}/blood-requests/hospital/${username}`);
+      setSubmittedRequests(res.data);
+    } catch (error) {
+      console.error('Failed to fetch requests', error);
+    }
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -37,18 +54,30 @@ export default function BloodRequest() {
     try {
       await axios.post(`${BASE_URL}/blood-request`, form);
       toast.success('Blood Request Submitted Successfully');
-      setForm({
-        hospitalId: 1,
+      setForm((prev) => ({
+        ...prev,
         bloodGroup: '',
         unitsNeeded: '',
         urgency: 'LOW',
         patientName: '',
         patientAge: '',
         patientInfo: ''
-      });
+      }));
+      fetchRequests(form.username);
     } catch (error) {
       console.error(error);
       toast.error('Failed to submit blood request');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${BASE_URL}/blood-request/${id}`);
+      toast.success('Request deleted successfully');
+      fetchRequests(form.username);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to delete request');
     }
   };
 
@@ -154,6 +183,36 @@ export default function BloodRequest() {
           </Button>
         </form>
       </Card>
+
+      {submittedRequests.length > 0 && (
+        <div className="mt-5">
+          <Typography variant="h5" className="text-center text-success mb-4">
+            Submitted Blood Requests
+          </Typography>
+
+          {submittedRequests.map((req) => (
+            <Card key={req.id} className="mb-3 shadow-sm">
+              <CardContent>
+                <Typography><strong>Blood Group:</strong> {req.bloodGroup}</Typography>
+                <Typography><strong>Units Needed:</strong> {req.unitsNeeded}</Typography>
+                <Typography><strong>Urgency:</strong> {req.urgency}</Typography>
+                <Typography><strong>Patient Name:</strong> {req.patientName}</Typography>
+                <Typography><strong>Status:</strong> {req.status}</Typography>
+                {req.organBankName && (
+                  <Typography><strong>Accepted by Organ Bank:</strong> {req.organBankName}</Typography>
+                )}
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={() => handleDelete(req.id)}
+                >
+                  Delete
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <ToastContainer position="top-center" autoClose={3000} />
     </Container>
