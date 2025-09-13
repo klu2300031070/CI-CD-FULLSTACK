@@ -17,7 +17,7 @@ export default function BloodNavBar() {
 
   const handleLogout = () => {
     setIsBloodBankLoggedIn(false)
-    navigate('/') // Redirect to login page
+    navigate('/') 
   }
 
   const bloodUser = JSON.parse(sessionStorage.getItem('Blood_user'))
