@@ -13,7 +13,7 @@ import {
 const data = [
   { name: 'Hospitals', count: 120 },
   { name: 'Blood Banks', count: 80 },
-  { name: 'Volunteers', count: 150 },
+  { name: 'Donors', count: 150 },
 ];
 
 export default function About() {

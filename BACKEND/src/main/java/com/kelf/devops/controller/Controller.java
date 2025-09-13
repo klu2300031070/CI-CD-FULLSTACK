@@ -2,6 +2,7 @@ package com.kelf.devops.controller;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kelf.devops.model.BloodData;
 import com.kelf.devops.model.BloodDonor;
 import com.kelf.devops.model.OrganDonor;
 import com.kelf.devops.model.RequestBlood;
 import com.kelf.devops.model.RequestOrgan;
+import com.kelf.devops.repository.BloodDataRepository;
 import com.kelf.devops.repository.BloodDonorRepository;
 import com.kelf.devops.repository.OrganRepository;
 import com.kelf.devops.repository.RequestBlooodRepisotory;
@@ -40,17 +43,34 @@ public class Controller {
     
     @Autowired
     private RequestOrganRepository ror;
+    
+    @Autowired
+	private BloodDataRepository bdr;
 
     @PostMapping("/registerblooddonor")
     public ResponseEntity<String> registerbloodDonor(@RequestBody BloodDonor b) {
     	 try
   	   {
   		 br.save(b);
+  		 
+  		BloodData bd = bdr.findByOrgAndType(b.getOrg(), b.getBloodType());
+
+        if (bd != null) {
+           
+            bd.setDonatedunits(bd.getDonatedunits() + 1);
+            bd.setAunits(bd.getAunits() + 1);
+
+            
+            bdr.save(bd);
+        } else {
+           
+            return ResponseEntity.status(404).body("BloodData record not found for org and blood type.");
+        }
   		  return ResponseEntity.ok("Registred Successfully"); // 200 - success
   	   }
   	   catch(Exception e)
   	   {
-  		  // return ResponseEntity.status(500).body("Registration failed: " + e.getMessage());
+  		  
   		   return ResponseEntity.status(500).body("BloodDonor Registration Failed... ");
   	   }
     }
@@ -91,7 +111,6 @@ public class Controller {
   	  	   }
   	  	   catch(Exception e)
   	  	   {
-  	  		  // return ResponseEntity.status(500).body("Registration failed: " + e.getMessage());
   	  		   return ResponseEntity.status(500).body("BloodDonor Request Failed... ");
   	  	   }
     	 }
@@ -148,20 +167,46 @@ public class Controller {
     	     }
     	 }
     	 @PutMapping("/updatebloodstatus")
-    	 public ResponseEntity<String> updatebloodRequestStatus(@RequestBody RequestBlood r) {
+    	 public ResponseEntity<String> updateBloodStatus(@RequestBody RequestBlood updatedRequest) {
     	     try {
-    	         RequestBlood existingRequest = rbr.findById(r.getId()).orElse(null);
-    	         if (existingRequest == null) {
+    	         // Fetch the existing request
+    	         Optional<RequestBlood> optionalRequest = rbr.findById(updatedRequest.getId());
+
+    	         if (optionalRequest.isEmpty()) {
     	             return ResponseEntity.notFound().build();
     	         }
 
-    	         existingRequest.setStatus(r.getStatus());
+    	         RequestBlood existingRequest = optionalRequest.get();
+
+    	         
+    	         existingRequest.setStatus(updatedRequest.getStatus());
     	         rbr.save(existingRequest);
-    	         return ResponseEntity.ok("Status updated successfully");
+
+    	         
+    	         if ("Accepted".equalsIgnoreCase(updatedRequest.getStatus())) {
+    	             BloodData bloodData = bdr.findByType(existingRequest.getBloodtype());
+
+    	             if (bloodData == null) {
+    	                 return ResponseEntity.status(404).body("No blood data found for type: " + existingRequest.getBloodtype());
+    	             }
+
+    	             if (bloodData.getAunits() <= 0) {
+    	                 return ResponseEntity.badRequest().body("Insufficient available units for type: " + existingRequest.getBloodtype());
+    	             }
+
+    	             
+    	             bloodData.setAunits(bloodData.getAunits() - 1);
+    	             bloodData.setUsedunits(bloodData.getUsedunits() + 1);
+
+    	             bdr.save(bloodData);
+    	         }
+
+    	         return ResponseEntity.ok("Status updated and blood stock decremented (if applicable)");
     	     } catch (Exception e) {
-    	         return ResponseEntity.status(500).body("Failed to update status");
+    	         return ResponseEntity.status(500).body("Server error: " + e.getMessage());
     	     }
     	 }
+
        @GetMapping("/viewallblooddonors")
        public ResponseEntity<List<BloodDonor>> getblooddonors() {
     	   try {

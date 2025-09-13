@@ -1,5 +1,14 @@
 import React, { useState } from 'react'
-import { TextField, Button, Box, Typography } from '@mui/material'
+import {
+  TextField,
+  Button,
+  Box,
+  Typography,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from '@mui/material'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -25,11 +34,11 @@ export default function BloodBankRegistration() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Submitting form:', form)  // Debug: check form data
+    console.log('Submitting form:', form)
 
     try {
       const res = await axios.post('http://localhost:2506/registerbloodbank', form)
-      console.log('Success response:', res.data) // Debug: check response
+      console.log('Success response:', res.data)
       toast.success('Blood bank registered successfully!')
 
       setForm({
@@ -87,14 +96,22 @@ export default function BloodBankRegistration() {
               onChange={handleChange}
               required
             />
-            <TextField
-              label="Organization Type"
-              name="typeorg"
-              value={form.typeorg}
-              onChange={handleChange}
-              placeholder="e.g., Government, NGO, Private"
-              required
-            />
+
+            {/* Dropdown for Organization Type */}
+            <FormControl fullWidth required>
+              <InputLabel>Organization Type</InputLabel>
+              <Select
+                name="typeorg"
+                value={form.typeorg}
+                onChange={handleChange}
+                label="Organization Type"
+              >
+                <MenuItem value="NGO">NGO</MenuItem>
+                <MenuItem value="GOVERNMENT">GOVERNMENT</MenuItem>
+                <MenuItem value="PRIVATE">PRIVATE</MenuItem>
+              </Select>
+            </FormControl>
+
             <TextField
               label="Contact Number"
               name="phone"
@@ -117,17 +134,14 @@ export default function BloodBankRegistration() {
               onChange={handleChange}
               required
             />
+
             <Button type="submit" variant="contained" color="primary">
               Register
             </Button>
           </Box>
         </form>
 
-        <ToastContainer
-          position="top-center"
-          autoClose={3000}
-          style={{ zIndex: 9999 }}  // Ensure it appears on top of other elements
-        />
+        <ToastContainer position="top-center" autoClose={3000} />
       </div>
     </div>
   )
