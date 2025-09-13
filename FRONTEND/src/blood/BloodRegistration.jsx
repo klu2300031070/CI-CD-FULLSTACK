@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 export default function BloodRegistration() {
   const [form, setForm] = useState({
@@ -15,6 +16,7 @@ export default function BloodRegistration() {
     organization: '',
     location: ''
   })
+  const navigate=useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -44,6 +46,7 @@ export default function BloodRegistration() {
         gender: '',
         bloodGroup: '',
         contact: '',
+        
         organization: '',
         location: ''
       })
@@ -51,6 +54,7 @@ export default function BloodRegistration() {
       console.error(err)
       toast.error('Failed to register donor.')
     }
+    navigate('/bloodregistrartion');
   }
 
   const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']

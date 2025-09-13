@@ -16,6 +16,7 @@ import Contact from './ContactUs';
 import BloodLogin from './../blood/BloodLogin';
 import OrganLogin from './../organs/OrganLogin';
 import Login from '../Hospital/Login';
+import BloodBankRegistration from '../blood/bloodbankregistration';
 
 export default function MainNavBar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -94,6 +95,7 @@ export default function MainNavBar() {
         <Route path="/bloodbank-login" element={<BloodLogin />} />
         <Route path="/organbank-login" element={<OrganLogin />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path='/bloodbankregister' element={<BloodBankRegistration/>} />
       </Routes>
     </Box>
   );

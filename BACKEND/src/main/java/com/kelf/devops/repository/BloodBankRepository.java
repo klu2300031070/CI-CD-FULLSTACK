@@ -7,5 +7,6 @@ import com.kelf.devops.model.BloodBank;
 
 @Repository
 public interface BloodBankRepository extends JpaRepository<BloodBank, Integer> {
+	public BloodBank findByUsernameAndPassword(String Username,String Password);
 
 }

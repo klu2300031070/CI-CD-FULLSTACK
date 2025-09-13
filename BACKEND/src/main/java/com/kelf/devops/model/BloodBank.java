@@ -17,6 +17,12 @@ public class BloodBank {
 	@Column(unique = true)
 	private String name;
 	
+	@Column(unique = true,nullable = false)
+	private String username;
+	
+	@Column(unique = true,nullable = false)
+	private String password;
+	
 	@Column
 	private String location;
 	
@@ -29,6 +35,22 @@ public class BloodBank {
 	@Column(unique = true)
 	private String email;
 	
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	@Column
 	private String ownername;
 

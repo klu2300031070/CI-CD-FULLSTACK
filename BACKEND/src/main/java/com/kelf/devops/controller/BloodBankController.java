@@ -43,5 +43,20 @@ public class BloodBankController {
 	            return ResponseEntity.status(500).build();
 	        }
 	    }
+	 @PostMapping("/checkbloodbanklogin")
+		public ResponseEntity<?> checkvoterlogin(@RequestBody BloodBank bb) {
+		    try {
+		        BloodBank b=bbr.findByUsernameAndPassword(bb.getUsername(),bb.getPassword());
+
+		        if (b != null) {
+		            return ResponseEntity.ok(b); // Successful login, send Voter object (or filtered version)
+		        } else {
+		            return ResponseEntity.status(401).body("Invalid username or password");
+		        }
+
+		    } catch (Exception e) {
+		        return ResponseEntity.status(500).body("Login failed: " + e.getMessage());
+		    }
+		}
 
 }

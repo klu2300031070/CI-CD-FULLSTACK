@@ -49,7 +49,7 @@ export default function BloodNavBar() {
           <Route path="/organaviaviablity" element={<BloodAviability />} />
           <Route path="/BloodRequest" element={<BloodRequest />} />
           <Route path="/bloodlogin" element={<BloodLogin />} />
-          <Route path='/bloodbankregister' element={<BloodBankRegistration/>} />
+          
         </Routes>
       </Container>
     </>
