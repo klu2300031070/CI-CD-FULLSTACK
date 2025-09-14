@@ -28,6 +28,17 @@ public class RequestBlood {
 	@Column
 	private String date;
 	
+	@Column
+	private String acceptedorg;
+	
+
+	public String getAcceptedorg() {
+		return acceptedorg;
+	}
+
+	public void setAcceptedorg(String acceptedorg) {
+		this.acceptedorg = acceptedorg;
+	}
 
 	public Long getId() {
 		return id;

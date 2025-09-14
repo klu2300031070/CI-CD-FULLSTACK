@@ -3,6 +3,7 @@ package com.kelf.devops.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class BloodBankController {
 	private BloodDataRepository bdr;
 	
 	@PostMapping("/registerbloodbank")
-	public ResponseEntity<String> registerbloodbank(@RequestBody BloodBank bb) {
+	 public ResponseEntity<String> registerbloodbank(@RequestBody BloodBank bb) {
 	    try {
 	        
 	        bbr.save(bb);
@@ -56,7 +57,7 @@ public class BloodBankController {
 	}
 
 	 @GetMapping("/viewallbloodbanks")
-	    public ResponseEntity<List<BloodBank>> getAllbloodbanks() {
+	 public ResponseEntity<List<BloodBank>> getAllbloodbanks() {
 	        try {
 	            List<BloodBank> requests = bbr.findAll();
 	            return ResponseEntity.ok(requests);
@@ -65,12 +66,12 @@ public class BloodBankController {
 	        }
 	    }
 	 @PostMapping("/checkbloodbanklogin")
-		public ResponseEntity<?> checkvoterlogin(@RequestBody BloodBank bb) {
+	 public ResponseEntity<?> checkvoterlogin(@RequestBody BloodBank bb) {
 		    try {
 		        BloodBank b=bbr.findByUsernameAndPassword(bb.getUsername(),bb.getPassword());
 
 		        if (b != null) {
-		            return ResponseEntity.ok(b); // Successful login, send Voter object (or filtered version)
+		            return ResponseEntity.ok(b); 
 		        } else {
 		            return ResponseEntity.status(401).body("Invalid username or password");
 		        }
@@ -79,9 +80,8 @@ public class BloodBankController {
 		        return ResponseEntity.status(500).body("Login failed: " + e.getMessage());
 		    }
 		}
-	 
 	 @PostMapping("/registerblooddata")
-	    public ResponseEntity<String> registerblooddata(@RequestBody BloodData  bd) {
+	 public ResponseEntity<String> registerblooddata(@RequestBody BloodData  bd) {
 	    	 try
 	  	   {
 	  		 bdr.save(bd);
@@ -112,11 +112,11 @@ public class BloodBankController {
 	 		BloodData bloodData = bdr.findByType(type);
 
 	 		if (bloodData == null) {
-	 			return ResponseEntity.notFound().build();
+	 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	 		}
 
 	 		if (bloodData.getAunits() <= 0) {
-	 			return ResponseEntity.badRequest().body(null);
+	 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	 		}
 
 	 		bloodData.setAunits(bloodData.getAunits() - 1);
@@ -127,7 +127,7 @@ public class BloodBankController {
 	 		return ResponseEntity.ok(bloodData);
 
 	 	} catch (Exception e) {
-	 		return ResponseEntity.status(500).build();
+	 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	 	}
 	 }
 

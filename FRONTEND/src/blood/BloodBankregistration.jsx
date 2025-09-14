@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 
 export default function BloodBankRegistration() {
   const navigate = useNavigate()
+
   const [form, setForm] = useState({
     name: '',
     username: '',
@@ -28,18 +29,34 @@ export default function BloodBankRegistration() {
     ownername: ''
   })
 
+  const [passwordTouched, setPasswordTouched] = useState(false)
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setForm({ ...form, [name]: value })
+    if (name === 'password') setPasswordTouched(true)
   }
+
+  // Password validation logic
+  const passwordValidations = {
+    hasSpecialChar: /[^A-Za-z0-9 ]/.test(form.password),
+    hasMinLength: form.password.length >= 8,
+    hasUpperCase: /[A-Z]/.test(form.password),
+    hasNumber: /\d/.test(form.password),
+  }
+
+  const isPasswordValid = Object.values(passwordValidations).every(Boolean)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Submitting form:', form)
+    if (!isPasswordValid) {
+      toast.error('Password does not meet the criteria.')
+      return
+    }
 
     try {
       const res = await axios.post('http://localhost:2506/registerbloodbank', form)
-      console.log('Success response:', res.data)
-      toast.success('Blood bank registered successfully!')
+      toast.success(res)
 
       setForm({
         name: '',
@@ -51,6 +68,7 @@ export default function BloodBankRegistration() {
         email: '',
         ownername: ''
       })
+
       navigate("/bloodbank-login")
     } catch (err) {
       console.error('Error on submit:', err)
@@ -87,8 +105,28 @@ export default function BloodBankRegistration() {
               type="password"
               value={form.password}
               onChange={handleChange}
+              onBlur={() => setPasswordTouched(true)}
               required
             />
+
+            {/* Password Validation Feedback */}
+            {passwordTouched && (
+              <Box>
+                <Typography variant="body2" style={{ color: passwordValidations.hasSpecialChar ? 'green' : 'red' }}>
+                  {passwordValidations.hasSpecialChar ? '✅ Contains Special Character' : '❌ Should Contain Special Character'}
+                </Typography>
+                <Typography variant="body2" style={{ color: passwordValidations.hasMinLength ? 'green' : 'red' }}>
+                  {passwordValidations.hasMinLength ? '✅ Minimum Length 8' : '❌ Minimum Length Should be 8'}
+                </Typography>
+                <Typography variant="body2" style={{ color: passwordValidations.hasUpperCase ? 'green' : 'red' }}>
+                  {passwordValidations.hasUpperCase ? '✅ Contains Capital Letter' : '❌ Should Contain Capital Letter'}
+                </Typography>
+                <Typography variant="body2" style={{ color: passwordValidations.hasNumber ? 'green' : 'red' }}>
+                  {passwordValidations.hasNumber ? '✅ Contains Number' : '❌ Should Contain a Number'}
+                </Typography>
+              </Box>
+            )}
+
             <TextField
               label="Location"
               name="location"
@@ -97,7 +135,6 @@ export default function BloodBankRegistration() {
               required
             />
 
-            {/* Dropdown for Organization Type */}
             <FormControl fullWidth required>
               <InputLabel>Organization Type</InputLabel>
               <Select
@@ -135,7 +172,12 @@ export default function BloodBankRegistration() {
               required
             />
 
-            <Button type="submit" variant="contained" color="primary">
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={!isPasswordValid}
+            >
               Register
             </Button>
           </Box>

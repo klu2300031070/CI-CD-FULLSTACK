@@ -9,25 +9,31 @@ export default function BloodBankDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchBloodData();
-  }, []);
+  fetchBloodData();
+}, []);
 
-  const fetchBloodData = () => {
-    axios.get('http://localhost:2506/viewallblooddata')
-      .then((res) => {
-        setBloodData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to fetch blood data:', err);
-        setLoading(false);
-      });
-  };
+const fetchBloodData = () => {
+  axios.get('http://localhost:2506/viewallblooddata')
+    .then((res) => {
+      const bloodUser = JSON.parse(sessionStorage.getItem('Blood_user'));
+      const orgName = bloodUser?.name;
+
+     
+      const filteredData = res.data.filter((item) => item.org === orgName);
+
+      setBloodData(filteredData);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error('Failed to fetch blood data:', err);
+      setLoading(false);
+    });
+};
 
   const handleDecrement = (type) => {
     axios.put(`http://localhost:2506/decrement/${type}`)
       .then((res) => {
-        // Replace the updated entry in local state
+       
         const updatedData = bloodData.map((item) =>
           item.type === type ? res.data : item
         );
@@ -57,7 +63,7 @@ export default function BloodBankDashboard() {
                   <Typography variant="h6" gutterBottom>
                     Blood Type: {data.type}
                   </Typography>
-                  <Typography><strong>Organization:</strong> {data.org}</Typography>
+                 
                   <Typography><strong>Donated Units:</strong> {data.donatedunits}</Typography>
                   <Typography><strong>Used Units:</strong> {data.usedunits}</Typography>
                   <Typography><strong>Available Units:</strong> {data.aunits}</Typography>

@@ -26,7 +26,7 @@ public class BloodBank {
 	@Column
 	private String location;
 	
-	@Column(unique = true)
+	@Column
 	private String typeorg;
 	
 	@Column(unique = true)

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,8 +86,7 @@ public class Controller {
     	  	   }
     	  	   catch(Exception e)
     	  	   {
-    	  		  // return ResponseEntity.status(500).body("Registration failed: " + e.getMessage());
-    	  		   return ResponseEntity.status(500).body("OrganDonor Registration Failed... ");
+    	  		 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	  	   }
     	    	 
     	
@@ -98,7 +98,7 @@ public class Controller {
  	            List<OrganDonor> requests = or.findAll();
  	            return ResponseEntity.ok(requests);
  	        } catch (Exception e) {
- 	            return ResponseEntity.status(500).build();
+ 	        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
  	        }
  	    }
     	  
@@ -111,7 +111,7 @@ public class Controller {
   	  	   }
   	  	   catch(Exception e)
   	  	   {
-  	  		   return ResponseEntity.status(500).body("BloodDonor Request Failed... ");
+  	  		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   	  	   }
     	 }
     	    
@@ -124,7 +124,7 @@ public class Controller {
     	  	   }
     	  	   catch(Exception e)
     	  	   {
-    	  		  // return ResponseEntity.status(500).body("Registration failed: " + e.getMessage());
+    	  		 
     	  		   return ResponseEntity.status(500).body("OrganDonor Request Failed... ");
     	  	   }
     	 }
@@ -136,9 +136,19 @@ public class Controller {
  	            List<RequestBlood> requests = rbr.findByStatusIgnoreCase("pending");
  	            return ResponseEntity.ok(requests);
  	        } catch (Exception e) {
- 	            return ResponseEntity.status(500).build();
+ 	        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
  	        }
  	    }
+    	 
+    	 @GetMapping("/viewallrequests")
+  	    public ResponseEntity<List<RequestBlood>> getAllrequests() {
+  	        try {
+  	            List<RequestBlood> requests = rbr.findAll();
+  	            return ResponseEntity.ok(requests);
+  	        } catch (Exception e) {
+  	        	return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+  	        }
+  	    }
     	 
     	 @GetMapping("/viewallorganrequests")
     	 public ResponseEntity<List<RequestOrgan>> getAllPendingOrganRequests() {
@@ -146,7 +156,7 @@ public class Controller {
     	         List<RequestOrgan> pendingRequests = ror.findByStatusIgnoreCase("pending");
     	         return ResponseEntity.ok(pendingRequests);
     	     } catch (Exception e) {
-    	         return ResponseEntity.status(500).build();
+    	    	 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	     }
     	 }
 
@@ -169,43 +179,52 @@ public class Controller {
     	 @PutMapping("/updatebloodstatus")
     	 public ResponseEntity<String> updateBloodStatus(@RequestBody RequestBlood updatedRequest) {
     	     try {
-    	         // Fetch the existing request
     	         Optional<RequestBlood> optionalRequest = rbr.findById(updatedRequest.getId());
 
     	         if (optionalRequest.isEmpty()) {
-    	             return ResponseEntity.notFound().build();
+    	             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     	         }
 
     	         RequestBlood existingRequest = optionalRequest.get();
 
-    	         
-    	         existingRequest.setStatus(updatedRequest.getStatus());
-    	         rbr.save(existingRequest);
-
-    	         
     	         if ("Accepted".equalsIgnoreCase(updatedRequest.getStatus())) {
-    	             BloodData bloodData = bdr.findByType(existingRequest.getBloodtype());
+
+    	             // Correct lookup by org and type
+    	             BloodData bloodData = bdr.findByOrgAndType(updatedRequest.getAcceptedorg(), existingRequest.getBloodtype());
 
     	             if (bloodData == null) {
-    	                 return ResponseEntity.status(404).body("No blood data found for type: " + existingRequest.getBloodtype());
+    	                 return ResponseEntity.status(404).body("No blood data found for type: " 
+    	                     + existingRequest.getBloodtype() + " and org: " + updatedRequest.getAcceptedorg());
     	             }
 
     	             if (bloodData.getAunits() <= 0) {
-    	                 return ResponseEntity.badRequest().body("Insufficient available units for type: " + existingRequest.getBloodtype());
+    	                 return ResponseEntity.badRequest().body("Insufficient available units for type: " 
+    	                     + existingRequest.getBloodtype() + " in org: " + updatedRequest.getAcceptedorg());
     	             }
 
-    	             
+    	             // Update blood stock
     	             bloodData.setAunits(bloodData.getAunits() - 1);
     	             bloodData.setUsedunits(bloodData.getUsedunits() + 1);
-
     	             bdr.save(bloodData);
+
+    	             // Update request status and accepted org
+    	             existingRequest.setStatus(updatedRequest.getStatus());
+    	             existingRequest.setAcceptedorg(updatedRequest.getAcceptedorg());
+    	             rbr.save(existingRequest);
+
+    	             return ResponseEntity.ok("Request accepted and blood stock updated.");
+    	         } else {
+    	             // For other status updates (if needed)
+    	             existingRequest.setStatus(updatedRequest.getStatus());
+    	             rbr.save(existingRequest);
+    	             return ResponseEntity.ok("Request status updated.");
     	         }
 
-    	         return ResponseEntity.ok("Status updated and blood stock decremented (if applicable)");
     	     } catch (Exception e) {
     	         return ResponseEntity.status(500).body("Server error: " + e.getMessage());
     	     }
     	 }
+
 
        @GetMapping("/viewallblooddonors")
        public ResponseEntity<List<BloodDonor>> getblooddonors() {
@@ -213,7 +232,7 @@ public class Controller {
 	            List<BloodDonor> requests = br.findAll();
 	            return ResponseEntity.ok(requests);
 	        } catch (Exception e) {
-	            return ResponseEntity.status(500).build();
+	             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	        }
     	   
        }
@@ -225,7 +244,7 @@ public class Controller {
                List<BloodDonor> requests = br.findByBloodType(bloodType);
                return ResponseEntity.ok(requests);
            } catch (Exception e) {
-               return ResponseEntity.status(500).build();
+        	   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
            }
        }
 
@@ -237,7 +256,7 @@ public class Controller {
                List<OrganDonor> requests = or.findByBloodTypeAndOrgan(bloodType, organ);
                return ResponseEntity.ok(requests);
            } catch (Exception e) {
-               return ResponseEntity.status(500).build();
+        	   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
            }
        }
        

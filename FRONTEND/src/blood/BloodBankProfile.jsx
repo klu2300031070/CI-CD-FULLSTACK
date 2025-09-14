@@ -30,16 +30,13 @@ export default function BloodProfile() {
         username: userData.username,
         email: userData.email,
         phone: userData.phone,
-        address: userData.address,
+        location: userData.location,
         // Add other fields if needed
       })
     }
   }, [navigate])
 
-  const handleLogout = () => {
-    sessionStorage.clear()
-    navigate('/bloodlogin')
-  }
+  
 
   return (
     <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
@@ -54,16 +51,14 @@ export default function BloodProfile() {
             <Typography><strong>Username:</strong> {profile.username}</Typography>
             <Typography><strong>Email:</strong> {profile.email}</Typography>
             <Typography><strong>Phone:</strong> {profile.phone}</Typography>
-            <Typography><strong>Address:</strong> {profile.address}</Typography>
+            <Typography><strong>Location:</strong> {profile.location}</Typography>
           </Box>
 
           <Box mt={4} display="flex" justifyContent="center" gap={2}>
             <Button variant="contained" color="primary" onClick={() => navigate('/bloodbankdashboard')}>
               Go to Dashboard
             </Button>
-            <Button variant="outlined" color="error" onClick={handleLogout}>
-              Logout
-            </Button>
+           
           </Box>
         </CardContent>
       </Card>

@@ -14,15 +14,27 @@ import axios from 'axios';
 
 export default function BloodRequests() {
   const [requests, setRequests] = useState([]);
+  const [acceptedRequests, setAcceptedRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all requests from backend
+  const bloodUser = JSON.parse(sessionStorage.getItem('Blood_user'));
+
   useEffect(() => {
+    if (bloodUser?.name) {
+      fetchPendingRequests();
+      fetchAcceptedRequests();
+    } else {
+      toast.error('Blood user not found in session storage');
+    }
+  }, []);
+
+  const fetchPendingRequests = () => {
     axios
-      .get('http://localhost:2506/viewallbloodrequests')
+      .get('http://localhost:2506/viewallrequests')
       .then((res) => {
-        // Filter only "Pending" requests
-        const pendingRequests = res.data.filter((req) => req.status === 'Pending');
+        const pendingRequests = res.data.filter(
+          (req) => req.status === 'Pending'
+        );
         setRequests(pendingRequests);
         setLoading(false);
       })
@@ -31,22 +43,46 @@ export default function BloodRequests() {
         toast.error('Failed to load blood requests');
         setLoading(false);
       });
-  }, []);
+  };
 
-  // Handle Accept button click
+  const fetchAcceptedRequests = () => {
+    axios
+      .get('http://localhost:2506/viewallrequests')
+      .then((res) => {
+        const accepted = res.data.filter(
+          (req) =>
+            req.status === 'Accepted'
+        );
+        setAcceptedRequests(accepted);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch accepted requests:', err);
+      });
+  };
+
   const handleAccept = async (id) => {
     try {
       const payload = {
         id: id,
         status: 'Accepted',
+        acceptedorg: bloodUser?.name,
       };
 
-      const res = await axios.put('http://localhost:2506/updatebloodstatus', payload);
+      const res = await axios.put(
+        'http://localhost:2506/updatebloodstatus',
+        payload
+      );
 
       toast.success(res.data || `Request ID ${id} accepted`);
 
-      // Remove accepted request from list
+      const acceptedReq = requests.find((req) => req.id === id);
+
       setRequests((prev) => prev.filter((req) => req.id !== id));
+
+      setAcceptedRequests((prev) => [
+        ...prev,
+        { ...acceptedReq, status: 'Accepted', acceptedorg: bloodUser.name },
+      ]);
     } catch (err) {
       console.error('Failed to accept request:', err);
 
@@ -105,6 +141,41 @@ export default function BloodRequests() {
             </div>
           ))}
         </div>
+      )}
+
+      <Typography variant="h5" className="mt-5 mb-3 text-center">
+        Accepted Requests by Your Blood Bank
+      </Typography>
+
+      {acceptedRequests.length === 0 ? (
+        <Typography className="text-center">
+          No accepted requests yet.
+        </Typography>
+      ) : (
+        <table className="table table-striped">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date</th>
+              <th>Urgency</th>
+              <th>Blood Type</th>
+              <th>Hospital</th>
+              <th>Accepted By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {acceptedRequests.map((req) => (
+              <tr key={req.id}>
+                <td>{req.id}</td>
+                <td>{req.date}</td>
+                <td>{req.urgency}</td>
+                <td>{req.bloodtype}</td>
+                <td>{req.hospital}</td>
+                <td>{req.acceptedorg}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
 
       <ToastContainer position="top-center" autoClose={3000} />
