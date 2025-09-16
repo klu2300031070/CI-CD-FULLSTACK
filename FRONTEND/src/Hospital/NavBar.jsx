@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, Route, Routes, useNavigate } from 'react-router-dom';
-import Login from '../hospital/Login'; // Assuming path
-import ViewAllOrgan from './ViewAllOrgan';
 import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth } from '../contextapi/AuthContext';
 import BloodRequest from './BloodRequest';
 import BloodRequestStatus from './BloodRequestStatus';
 import BloodAvailability from './BloodAvailability';
+import HospitalLogin from './HospitalLogin';
+import HospitalUpdateForm from './HospitalUpdateForm';
 
 export default function NavBar() {
   const { setIsHospitalLoggedIn } = useAuth();
@@ -15,7 +15,7 @@ export default function NavBar() {
 
   const handleLogout = () => {
     setIsHospitalLoggedIn(false);
-    navigate('/hospitallogin'); // Redirect to login page
+    navigate('/hospital-login'); // Redirect to login page
   };
 
   return (
@@ -35,8 +35,8 @@ export default function NavBar() {
             <Link to="/blood-request-status" className="text-decoration-none">
               <Button variant="contained" color="secondary">Request Status</Button>
             </Link>
-            <Link to="/view-all-organ" className="text-decoration-none">
-              <Button variant="contained" color="secondary">View Organs</Button>
+            <Link to="/update-profile" className="text-decoration-none">
+              <Button variant="contained" color="secondary">Profile Update</Button>
             </Link>
             <Button variant="contained" color="error" onClick={handleLogout}>
               Logout
@@ -50,8 +50,8 @@ export default function NavBar() {
         <Route path="/blood-request" element={<BloodRequest/>} />
         <Route path="/blood-availability" element={<BloodAvailability/>} />
         <Route path="/blood-request-status" element={<BloodRequestStatus />} />
-        <Route path="/view-all-organ" element={<ViewAllOrgan />} />
-        <Route path="/hospitallogin" element={<Login />} />
+        <Route path="/update-profile" element={<HospitalUpdateForm />} />
+        <Route path="/hospital-login" element={<HospitalLogin />} />
       </Routes>
     </>
   );

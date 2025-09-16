@@ -13,13 +13,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import config from '../config';
+import config from './config';
 
 const BASE_URL = `${config.url}`;
 
 export default function BloodRequest() {
   const [form, setForm] = useState({
-    username: '',    
     bloodGroup: '',
     unitsNeeded: '',
     urgency: 'LOW',
@@ -28,12 +27,20 @@ export default function BloodRequest() {
     patientInfo: ''
   });
 
+  const [hospitalDetails, setHospitalDetails] = useState({});
   const [submittedRequests, setSubmittedRequests] = useState([]);
 
+  // Fetch hospital info from session or API
   useEffect(() => {
-    const usernameFromStorage = sessionStorage.getItem('username') || 'unknown_user';
-    setForm((prev) => ({ ...prev, username: usernameFromStorage }));
-    fetchRequests(usernameFromStorage);
+    const username = sessionStorage.getItem('username');
+    if (username) {
+      axios.get(`${BASE_URL}/hospitalapi/get/${username}`)
+        .then(res => {
+          setHospitalDetails(res.data);
+          fetchRequests(username);
+        })
+        .catch(err => console.error('Failed to fetch hospital details', err));
+    }
   }, []);
 
   const fetchRequests = async (username) => {
@@ -51,19 +58,25 @@ export default function BloodRequest() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Combine hospital info + blood request details
+    const payload = {
+      ...hospitalDetails,
+      ...form
+    };
+
     try {
-      await axios.post(`${BASE_URL}/blood-request`, form);
+      await axios.post(`${BASE_URL}/blood-request`, payload);
       toast.success('Blood Request Submitted Successfully');
-      setForm((prev) => ({
-        ...prev,
+      setForm({
         bloodGroup: '',
         unitsNeeded: '',
         urgency: 'LOW',
         patientName: '',
         patientAge: '',
         patientInfo: ''
-      }));
-      fetchRequests(form.username);
+      });
+      fetchRequests(hospitalDetails.username);
     } catch (error) {
       console.error(error);
       toast.error('Failed to submit blood request');
@@ -74,7 +87,7 @@ export default function BloodRequest() {
     try {
       await axios.delete(`${BASE_URL}/blood-request/${id}`);
       toast.success('Request deleted successfully');
-      fetchRequests(form.username);
+      fetchRequests(hospitalDetails.username);
     } catch (error) {
       console.error(error);
       toast.error('Failed to delete request');
@@ -97,7 +110,6 @@ export default function BloodRequest() {
               name="bloodGroup"
               value={form.bloodGroup}
               onChange={handleChange}
-              variant="outlined"
               required
             >
               {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(group => (
@@ -112,10 +124,8 @@ export default function BloodRequest() {
               type="number"
               label="Units Needed"
               name="unitsNeeded"
-              placeholder="Units Needed"
               value={form.unitsNeeded}
               onChange={handleChange}
-              variant="outlined"
               required
             />
           </Box>
@@ -128,7 +138,6 @@ export default function BloodRequest() {
               name="urgency"
               value={form.urgency}
               onChange={handleChange}
-              variant="outlined"
               required
             >
               {['LOW', 'MEDIUM', 'HIGH'].map(level => (
@@ -142,10 +151,8 @@ export default function BloodRequest() {
               fullWidth
               label="Patient Name"
               name="patientName"
-              placeholder="Patient Name"
               value={form.patientName}
               onChange={handleChange}
-              variant="outlined"
               required
             />
           </Box>
@@ -156,10 +163,8 @@ export default function BloodRequest() {
               type="number"
               label="Patient Age"
               name="patientAge"
-              placeholder="Patient Age"
               value={form.patientAge}
               onChange={handleChange}
-              variant="outlined"
               required
             />
           </Box>
@@ -169,10 +174,8 @@ export default function BloodRequest() {
               fullWidth
               label="Additional Patient Info"
               name="patientInfo"
-              placeholder="Other Patient Details"
               value={form.patientInfo}
               onChange={handleChange}
-              variant="outlined"
               multiline
               rows={3}
             />

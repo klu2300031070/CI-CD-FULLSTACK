@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import config from '../config';
 import {
   Container,
   Typography,
@@ -14,6 +13,7 @@ import {
   Box
 } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import config from './config';
 
 const BASE_URL = `${config.url}`;
 

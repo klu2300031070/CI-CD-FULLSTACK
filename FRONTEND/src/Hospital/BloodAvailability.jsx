@@ -17,7 +17,7 @@ import {
   MenuItem
 } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import config from '../config';
+import config from './config';
 
 const BASE_URL = `${config.url}`;
 
