@@ -1,11 +1,15 @@
 package com.kelf.devops.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import com.kelf.devops.model.Hospital;
+import com.kelf.devops.model.RequestBlood;
+import com.kelf.devops.repository.RequestBlooodRepisotory;
 import com.kelf.devops.service.HospitalService;
 
 @RestController
@@ -68,5 +72,51 @@ public class HospitalController {
         }
         return new ResponseEntity<>(updatedHospital, HttpStatus.OK);
     }
+    
+    
+    
+    @PostMapping("/blood-requests")
+    public ResponseEntity<RequestBlood> createRequest(@RequestBody RequestBlood requestBlood) {
+        RequestBlood created = hospitalService.createRequest(requestBlood);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
+    @GetMapping("/blood-requests")
+    public ResponseEntity<List<RequestBlood>> getAllRequests() {
+        return ResponseEntity.ok(hospitalService.getAllRequests());
+    }
+
+    @GetMapping("/blood-requests/{id}")
+    public ResponseEntity<?> getRequestById(@PathVariable Long id) {
+        RequestBlood request = hospitalService.getRequestById(id);
+        if (request == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Request not found.");
+        }
+        return ResponseEntity.ok(request);
+    }
+
+    @GetMapping("/blood-requests/hospital/{username}")
+    public ResponseEntity<List<RequestBlood>> getRequestsByHospitalUsername(@PathVariable String username) {
+        return ResponseEntity.ok(hospitalService.getRequestsByHospitalUsername(username));
+    }
+
+    @GetMapping("/blood-requests/status/{status}")
+    public ResponseEntity<List<RequestBlood>> getRequestsByStatus(@PathVariable String status) {
+        return ResponseEntity.ok(hospitalService.getRequestsByStatus(status));
+    }
+
+    @PutMapping("/blood-requests/{id}")
+    public ResponseEntity<?> updateRequest(@PathVariable Long id, @RequestBody RequestBlood requestBlood) {
+        RequestBlood updated = hospitalService.updateRequest(id, requestBlood);
+        if (updated == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Request not found.");
+        }
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/blood-requests/{id}")
+    public ResponseEntity<?> deleteRequest(@PathVariable Long id) {
+        hospitalService.deleteRequest(id);
+        return ResponseEntity.ok("Request deleted successfully!");
+    }
 }

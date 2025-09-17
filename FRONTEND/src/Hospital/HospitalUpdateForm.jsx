@@ -110,15 +110,15 @@ export default function HospitalUpdateForm() {
               label="Username"
               name="username"
               value={form.username}
-              onChange={handleChange}
-              required
+              disabled
+              InputProps={{ readOnly: true }}
             />
             <TextField
               label="Hospital Name"
               name="name"
               value={form.name}
-              onChange={handleChange}
-              required
+              disabled
+              InputProps={{ readOnly: true }}
             />
             <TextField
               label="Owner Name"
@@ -168,8 +168,8 @@ export default function HospitalUpdateForm() {
               label="License Number"
               name="licenseNo"
               value={form.licenseNo}
-              onChange={handleChange}
-              required
+              disabled
+              InputProps={{ readOnly: true }}
             />
             <Button type="submit" variant="contained" color="primary">
               Update Hospital

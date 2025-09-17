@@ -10,6 +10,7 @@ import com.kelf.devops.model.RequestBlood;
 @Repository
 public interface RequestBlooodRepisotory extends JpaRepository<RequestBlood, Long> {
 
-	List<RequestBlood> findByStatusIgnoreCase(String string);
+	List<RequestBlood> findByStatusIgnoreCase(String status);
 
+    List<RequestBlood> findByHospitalUsername(String hospitalUsername);
 }

@@ -1,12 +1,15 @@
 package com.kelf.devops.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kelf.devops.model.Hospital;
+import com.kelf.devops.model.RequestBlood;
 import com.kelf.devops.repository.HospitalRepository;
+import com.kelf.devops.repository.RequestBlooodRepisotory;
 
 @Service
 public class HospitalServiceImpl implements HospitalService {
@@ -64,6 +67,62 @@ public class HospitalServiceImpl implements HospitalService {
         }
 
         return hospitalRepository.save(existingHospital);
+    }
+    
+    
+    @Autowired
+    private RequestBlooodRepisotory requestBloodRepository;
+
+    @Override
+    public RequestBlood createRequest(RequestBlood requestBlood) {
+        return requestBloodRepository.save(requestBlood);
+    }
+    
+    @Override
+    public List<RequestBlood> getAllRequests() {
+        return requestBloodRepository.findAll();
+    }
+
+    @Override
+    public RequestBlood getRequestById(Long id) {
+        return requestBloodRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<RequestBlood> getRequestsByHospitalUsername(String hospitalUsername) {
+        return requestBloodRepository.findByHospitalUsername(hospitalUsername);
+    }
+
+    @Override
+    public List<RequestBlood> getRequestsByStatus(String status) {
+        return requestBloodRepository.findByStatusIgnoreCase(status);
+    }
+
+    @Override
+    public RequestBlood updateRequest(Long id, RequestBlood requestBlood) {
+        Optional<RequestBlood> optional = requestBloodRepository.findById(id);
+        if (optional.isPresent()) {
+            RequestBlood existing = optional.get();
+            // Update only necessary fields, except id
+            existing.setBloodGroup(requestBlood.getBloodGroup());
+            existing.setUnitsNeeded(requestBlood.getUnitsNeeded());
+            existing.setUrgency(requestBlood.getUrgency());
+            existing.setStatus(requestBlood.getStatus());
+            existing.setDate(requestBlood.getDate());
+            existing.setAcceptedOrg(requestBlood.getAcceptedOrg());
+            existing.setPatientName(requestBlood.getPatientName());
+            existing.setPatientAge(requestBlood.getPatientAge());
+            existing.setPatientInfo(requestBlood.getPatientInfo());
+            existing.setHospitalUsername(requestBlood.getHospitalUsername());
+            return requestBloodRepository.save(existing);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void deleteRequest(Long id) {
+        requestBloodRepository.deleteById(id);
     }
 
 }

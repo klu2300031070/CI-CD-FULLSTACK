@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  MenuItem,
-  Button,
-  Box,
-  Container
+  Card, CardContent, Typography, TextField, MenuItem,
+  Button, Box, Container
 } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -27,25 +21,20 @@ export default function BloodRequest() {
     patientInfo: ''
   });
 
-  const [hospitalDetails, setHospitalDetails] = useState({});
   const [submittedRequests, setSubmittedRequests] = useState([]);
 
-  // Fetch hospital info from session or API
+  const hospitalUserJson = sessionStorage.getItem('Hospital_user');
+  const username = hospitalUserJson ? JSON.parse(hospitalUserJson).username : null;
+
   useEffect(() => {
-    const username = sessionStorage.getItem('username');
     if (username) {
-      axios.get(`${BASE_URL}/hospitalapi/get/${username}`)
-        .then(res => {
-          setHospitalDetails(res.data);
-          fetchRequests(username);
-        })
-        .catch(err => console.error('Failed to fetch hospital details', err));
+      fetchRequests(username);
     }
-  }, []);
+  }, [username]);
 
   const fetchRequests = async (username) => {
     try {
-      const res = await axios.get(`${BASE_URL}/blood-requests/hospital/${username}`);
+      const res = await axios.get(`${BASE_URL}/hospitalapi/blood-requests/hospital/${username}`);
       setSubmittedRequests(res.data);
     } catch (error) {
       console.error('Failed to fetch requests', error);
@@ -53,20 +42,39 @@ export default function BloodRequest() {
   };
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm(prev => ({
+      ...prev,
+      [name]: (name === 'patientAge' || name === 'unitsNeeded') ? Number(value) : value
+    }));
+  };
+
+  // Function to get current date in YYYY-MM-DD format
+  const getCurrentDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (`0${date.getMonth() + 1}`).slice(-2);
+    const day = (`0${date.getDate()}`).slice(-2);
+    return `${year}-${month}-${day}`;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Combine hospital info + blood request details
+    if (!username) {
+      toast.error('Hospital user not logged in or session expired.');
+      return;
+    }
+
     const payload = {
-      ...hospitalDetails,
-      ...form
+      ...form,
+      hospitalUsername: username,
+      date: getCurrentDate(), // Add current date automatically
+      status: 'Pending'       // Set status as Pending by default
     };
 
     try {
-      await axios.post(`${BASE_URL}/blood-request`, payload);
+      await axios.post(`${BASE_URL}/hospitalapi/blood-requests`, payload);
       toast.success('Blood Request Submitted Successfully');
       setForm({
         bloodGroup: '',
@@ -76,7 +84,7 @@ export default function BloodRequest() {
         patientAge: '',
         patientInfo: ''
       });
-      fetchRequests(hospitalDetails.username);
+      fetchRequests(username);
     } catch (error) {
       console.error(error);
       toast.error('Failed to submit blood request');
@@ -85,9 +93,9 @@ export default function BloodRequest() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${BASE_URL}/blood-request/${id}`);
+      await axios.delete(`${BASE_URL}/hospitalapi/blood-requests/${id}`);
       toast.success('Request deleted successfully');
-      fetchRequests(hospitalDetails.username);
+      fetchRequests(username);
     } catch (error) {
       console.error(error);
       toast.error('Failed to delete request');
@@ -127,6 +135,7 @@ export default function BloodRequest() {
               value={form.unitsNeeded}
               onChange={handleChange}
               required
+              inputProps={{ min: 1 }}
             />
           </Box>
 
@@ -166,6 +175,7 @@ export default function BloodRequest() {
               value={form.patientAge}
               onChange={handleChange}
               required
+              inputProps={{ min: 0 }}
             />
           </Box>
 
@@ -200,9 +210,10 @@ export default function BloodRequest() {
                 <Typography><strong>Units Needed:</strong> {req.unitsNeeded}</Typography>
                 <Typography><strong>Urgency:</strong> {req.urgency}</Typography>
                 <Typography><strong>Patient Name:</strong> {req.patientName}</Typography>
+                <Typography><strong>Patient Age:</strong> {req.patientAge}</Typography>
                 <Typography><strong>Status:</strong> {req.status}</Typography>
-                {req.organBankName && (
-                  <Typography><strong>Accepted by Organ Bank:</strong> {req.organBankName}</Typography>
+                {req.acceptedOrg && (
+                  <Typography><strong>Accepted by Organ Bank:</strong> {req.acceptedOrg}</Typography>
                 )}
                 <Button
                   variant="outlined"
