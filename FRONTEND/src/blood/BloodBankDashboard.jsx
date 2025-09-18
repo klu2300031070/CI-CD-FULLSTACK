@@ -3,6 +3,7 @@ import axios from 'axios';
 import {
   Card, CardContent, Typography, Grid, Button, CircularProgress
 } from '@mui/material';
+import config from './config';
 
 export default function BloodBankDashboard() {
   const [bloodData, setBloodData] = useState([]);
@@ -11,9 +12,9 @@ export default function BloodBankDashboard() {
   useEffect(() => {
   fetchBloodData();
 }, []);
-
+ const baseUrl = `${config.url}`;
 const fetchBloodData = () => {
-  axios.get('http://localhost:2506/viewallblooddata')
+  axios.get(`${baseUrl}/viewallblooddata`)
     .then((res) => {
       const bloodUser = JSON.parse(sessionStorage.getItem('Blood_user'));
       const orgName = bloodUser?.name;

@@ -5,37 +5,42 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "request_blood")
 public class RequestBlood {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column
-	private String bloodtype;
-	
-	@Column
-	private String hospital;
-	
-	@Column
-	private String Urgency;
-	
-	@Column
-	private String status;
-	
-	@Column
-	private String date;
-	
-	@Column
-	private String acceptedorg;
-	
 
-	public String getAcceptedorg() {
-		return acceptedorg;
-	}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "request_id")
+    private Long id;
 
-	public void setAcceptedorg(String acceptedorg) {
-		this.acceptedorg = acceptedorg;
-	}
+    @Column(name = "blood_group", nullable = false)
+    private String bloodGroup;
+
+    @Column(name = "units_needed", nullable = false)
+    private int unitsNeeded;
+
+    @Column(name = "urgency", nullable = false)
+    private String urgency;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "date")
+    private String date;
+
+    @Column(name = "accepted_org")
+    private String acceptedOrg;
+
+    @Column(name = "patient_name", nullable = false)
+    private String patientName;
+
+    @Column(name = "patient_age", nullable = false)
+    private int patientAge;
+
+    @Column(name = "patient_info")
+    private String patientInfo;
+
+    @Column(name = "hospital_username", nullable = false)
+    private String hospitalUsername;
+
 
     public Long getId() {
         return id;
@@ -44,15 +49,25 @@ public class RequestBlood {
         this.id = id;
     }
 
-    
+    public String getBloodGroup() {
+        return bloodGroup;
+    }
+    public void setBloodGroup(String bloodGroup) {
+        this.bloodGroup = bloodGroup;
+    }
 
-    
+    public int getUnitsNeeded() {
+        return unitsNeeded;
+    }
+    public void setUnitsNeeded(int unitsNeeded) {
+        this.unitsNeeded = unitsNeeded;
+    }
 
     public String getUrgency() {
-        return Urgency;
+        return urgency;
     }
     public void setUrgency(String urgency) {
-        this.Urgency = urgency;
+        this.urgency = urgency;
     }
 
     public String getStatus() {
@@ -69,24 +84,40 @@ public class RequestBlood {
         this.date = date;
     }
 
-	public String getBloodtype() {
-		return bloodtype;
-	}
+    public String getAcceptedOrg() {
+        return acceptedOrg;
+    }
+    public void setAcceptedOrg(String acceptedOrg) {
+        this.acceptedOrg = acceptedOrg;
+    }
 
-	public void setBloodtype(String bloodtype) {
-		this.bloodtype = bloodtype;
-	}
+    public String getPatientName() {
+        return patientName;
+    }
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
 
-	public String getHospital() {
-		return hospital;
-	}
+    public int getPatientAge() {
+        return patientAge;
+    }
+    public void setPatientAge(int patientAge) {
+        this.patientAge = patientAge;
+    }
 
-	public void setHospital(String hospital) {
-		this.hospital = hospital;
-	}
+    public String getPatientInfo() {
+        return patientInfo;
+    }
+    public void setPatientInfo(String patientInfo) {
+        this.patientInfo = patientInfo;
+    }
 
+    public String getHospitalUsername() {
+        return hospitalUsername;
+    }
+    public void setHospitalUsername(String hospitalUsername) {
+        this.hospitalUsername = hospitalUsername;
+    }
 
-
-   
     
 }

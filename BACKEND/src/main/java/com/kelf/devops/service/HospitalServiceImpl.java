@@ -50,8 +50,6 @@ public class HospitalServiceImpl implements HospitalService {
             return null;
         }
         Hospital existingHospital = existingHospitalOpt.get();
-
-        // Update only editable fields
         existingHospital.setUsername(hospital.getUsername());
         existingHospital.setName(hospital.getName());
         existingHospital.setOwnerName(hospital.getOwnerName());
@@ -60,8 +58,6 @@ public class HospitalServiceImpl implements HospitalService {
         existingHospital.setContact(hospital.getContact());
         existingHospital.setEmail(hospital.getEmail());
         existingHospital.setLicenseNo(hospital.getLicenseNo());
-
-        // Update password only if provided (non-null and not empty)
         if (hospital.getPassword() != null && !hospital.getPassword().isEmpty()) {
             existingHospital.setPassword(hospital.getPassword());
         }
@@ -104,12 +100,12 @@ public class HospitalServiceImpl implements HospitalService {
         if (optional.isPresent()) {
             RequestBlood existing = optional.get();
             // Update only necessary fields, except id
-            existing.setBloodtype(requestBlood.getBloodtype());
+            existing.setBloodGroup(requestBlood.getBloodGroup());
          
             existing.setUrgency(requestBlood.getUrgency());
             existing.setStatus(requestBlood.getStatus());
             existing.setDate(requestBlood.getDate());
-            existing.setAcceptedorg(requestBlood.getAcceptedorg());
+            existing.setAcceptedOrg(requestBlood.getAcceptedOrg());
 
             
             return requestBloodRepository.save(existing);
