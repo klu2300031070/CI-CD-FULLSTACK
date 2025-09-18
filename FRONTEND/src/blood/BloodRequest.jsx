@@ -11,6 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import config from './config';
 
 export default function BloodRequests() {
   const [requests, setRequests] = useState([]);
@@ -27,10 +28,10 @@ export default function BloodRequests() {
       toast.error('Blood user not found in session storage');
     }
   }, []);
-
+  const baseUrl = `${config.url}`;
   const fetchPendingRequests = () => {
     axios
-      .get('http://localhost:2506/viewallrequests')
+      .get(`${baseUrl}/viewallrequests`)
       .then((res) => {
         const pendingRequests = res.data.filter(
           (req) => req.status?.toUpperCase() === 'PENDING'
@@ -47,7 +48,7 @@ export default function BloodRequests() {
 
   const fetchAcceptedRequests = () => {
     axios
-      .get('http://localhost:2506/viewallrequests')
+      .get(`${baseUrl}/viewallrequests`)
       .then((res) => {
         const accepted = res.data.filter(
           (req) => req.status?.toUpperCase() === 'ACCEPTED'
@@ -64,11 +65,11 @@ export default function BloodRequests() {
       const payload = {
         id: id,
         status: 'ACCEPTED',
-        acceptedOrg: bloodUser?.name, // ✅ match backend field
+        acceptedOrg: bloodUser?.name,
       };
 
       const res = await axios.put(
-        'http://localhost:2506/updatebloodstatus',
+        `${baseUrl}/updatebloodstatus`,
         payload
       );
 
@@ -116,10 +117,10 @@ export default function BloodRequests() {
               <Card className="shadow h-100">
                 <CardContent>
                   <Typography variant="h6" className="mb-2 text-primary">
-                    {req.hospitalUsername} {/* ✅ fixed */}
+                    {req.hospitalUsername} 
                   </Typography>
                   <Typography>
-                    Blood Needed: <strong>{req.bloodGroup}</strong> {/* ✅ fixed */}
+                    Blood Needed: <strong>{req.bloodGroup}</strong>
                   </Typography>
                   <Typography>
                     Units: <strong>{req.unitsNeeded}</strong>

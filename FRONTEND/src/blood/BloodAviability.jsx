@@ -12,16 +12,17 @@ import {
   CircularProgress
 } from '@mui/material'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import config from './config'
 
 export default function BloodAviability() {
   const [donors, setDonors] = useState([])
   const [loading, setLoading] = useState(true)
-
+const baseUrl = `${config.url}`;
   useEffect(() => {
     const bloodUser = JSON.parse(sessionStorage.getItem('Blood_user'))
     const loggedInOrg = bloodUser?.name
 
-    axios.get('http://localhost:2506/viewallblooddonors')
+    axios.get(`${baseUrl}/viewallblooddonors`)
       .then((res) => {
         // Filter donors based on org name match
         const filteredDonors = res.data.filter((donor) => donor.org === loggedInOrg)
