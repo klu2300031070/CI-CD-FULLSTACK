@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-  Card, CardContent, Typography, Grid, Button, CircularProgress
+  Card, CardContent, Typography, Grid,  CircularProgress
 } from '@mui/material';
 import config from './config';
 

@@ -14,7 +14,7 @@ import { useState } from 'react';
 import About from './About';
 import Contact from './ContactUs';
 import BloodLogin from './../blood/BloodLogin';
-import OrganLogin from './../organs/OrganLogin';
+
 import HospitalLogin from './../Hospital/HospitalLogin';
 import HospitalRegistrationForm from './../Hospital/HospitalRegistrationForm';
 import BloodBankRegistration from './../blood/BloodBankregistration';
@@ -95,7 +95,7 @@ export default function MainNavBar() {
         <Route path="/" element={<About />} />
         <Route path="/hospital-login" element={<HospitalLogin/>} />
         <Route path="/bloodbank-login" element={<BloodLogin />} />
-        <Route path="/organbank-login" element={<OrganLogin />} />
+ 
         <Route path="/hospital-registration" element={<HospitalRegistrationForm />} />
         <Route path="/contact" element={<Contact />} />
         <Route path='/bloodbankregister' element={<BloodBankRegistration/>} />
