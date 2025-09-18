@@ -1,12 +1,9 @@
 package com.kelf.devops.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "request_blood")
 public class RequestBlood {
 	
 	@Id
@@ -40,13 +37,37 @@ public class RequestBlood {
 		this.acceptedorg = acceptedorg;
 	}
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    
+
+    
+
+    public String getUrgency() {
+        return Urgency;
+    }
+    public void setUrgency(String urgency) {
+        this.Urgency = urgency;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDate() {
+        return date;
+    }
+    public void setDate(String date) {
+        this.date = date;
+    }
 
 	public String getBloodtype() {
 		return bloodtype;
@@ -64,29 +85,8 @@ public class RequestBlood {
 		this.hospital = hospital;
 	}
 
-	public String getUrgency() {
-		return Urgency;
-	}
 
-	public void setUrgency(String urgency) {
-		Urgency = urgency;
-	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-	
-	
+   
+    
 }

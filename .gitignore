@@ -1,2 +1,6 @@
 /.metadata/
 
+.metadata/
+*.log
+*.index
+*.zip

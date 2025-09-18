@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kelf.devops.model.BloodBank;
 import com.kelf.devops.model.BloodData;
-import com.kelf.devops.model.OrganDonor;
 import com.kelf.devops.repository.BloodBankRepository;
 import com.kelf.devops.repository.BloodDataRepository;
 
