@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kelf.devops.model.BloodBank;
@@ -20,16 +22,18 @@ import com.kelf.devops.model.BloodDonor;
 import com.kelf.devops.model.RequestBlood;
 import com.kelf.devops.repository.BloodBankRepository;
 import com.kelf.devops.repository.BloodDataRepository;
+import com.kelf.devops.repository.BloodDonorRepository;
 import com.kelf.devops.repository.RequestBlooodRepisotory;
 import com.kelf.devops.service.BloodBankService;
 import com.kelf.devops.service.BloodBankServiceimpl;
 
 @RestController
+@RequestMapping("/bloodbankapi")
 @CrossOrigin(origins="*")
 public class BloodBankController {
 	
 	@Autowired
-	private BloodBankRepository bbr;
+	private BloodDonorRepository br;
 	
 	@Autowired
 	private BloodDataRepository bdr;
@@ -66,7 +70,27 @@ public class BloodBankController {
   		   return ResponseEntity.status(500).body("BloodDonor Registration Failed... ");
   	   }
     }
-
+	@GetMapping("/viewallblooddonors")
+    public ResponseEntity<List<BloodDonor>> getblooddonors() {
+ 	   try {
+	            List<BloodDonor> requests = br.findAll();
+	            return ResponseEntity.ok(requests);
+	        } catch (Exception e) {
+	             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        }
+ 	   
+    }
+    
+    @GetMapping("/viewallbyblood")
+    public ResponseEntity<List<BloodDonor>> getAllByBlood(
+            @RequestParam("bloodType") String bloodType) {
+        try {
+            List<BloodDonor> requests = br.findByBloodType(bloodType);
+            return ResponseEntity.ok(requests);
+        } catch (Exception e) {
+     	   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 	 @GetMapping("/viewallbloodbanks")
 	 public ResponseEntity<List<BloodBank>> getAllbloodbanks() {
