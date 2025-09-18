@@ -1,85 +1,5 @@
 package com.kelf.devops.model;
 
-<<<<<<< HEAD
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-@Entity
-public class RequestBlood {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@Column
-	private String bloodtype;
-	
-	@Column
-	private String hospital;
-	
-	@Column
-	private String Urgency;
-	
-	@Column
-	private String status;
-	
-	@Column
-	private String date;
-	
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getBloodtype() {
-		return bloodtype;
-	}
-
-	public void setBloodtype(String bloodtype) {
-		this.bloodtype = bloodtype;
-	}
-
-	public String getHospital() {
-		return hospital;
-	}
-
-	public void setHospital(String hospital) {
-		this.hospital = hospital;
-	}
-
-	public String getUrgency() {
-		return Urgency;
-	}
-
-	public void setUrgency(String urgency) {
-		Urgency = urgency;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getDate() {
-		return date;
-	}
-
-	public void setDate(String date) {
-		this.date = date;
-	}
-	
-	
-=======
 import jakarta.persistence.*;
 
 @Entity
@@ -208,5 +128,4 @@ public class RequestBlood {
                ", patientAge=" + patientAge + ", patientInfo=" + patientInfo +
                ", hospitalUsername=" + hospitalUsername + "]";
     }
->>>>>>> vamsi
 }
