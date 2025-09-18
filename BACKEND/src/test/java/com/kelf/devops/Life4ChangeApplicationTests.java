@@ -1,4 +1,4 @@
-package com.kelf.hackathon;
+package com.kelf.devops;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
