@@ -15,7 +15,10 @@ import About from './About';
 import Contact from './ContactUs';
 import BloodLogin from './../blood/BloodLogin';
 import OrganLogin from './../organs/OrganLogin';
-import Login from '../Hospital/Login';
+import HospitalLogin from './../Hospital/HospitalLogin';
+import HospitalRegistrationForm from './../Hospital/HospitalRegistrationForm';
+import BloodBankRegistration from './../blood/BloodBankregistration';
+
 
 export default function MainNavBar() {
   const [anchorEl, setAnchorEl] = useState(null);

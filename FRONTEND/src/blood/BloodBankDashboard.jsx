@@ -67,16 +67,6 @@ const fetchBloodData = () => {
                   <Typography><strong>Donated Units:</strong> {data.donatedunits}</Typography>
                   <Typography><strong>Used Units:</strong> {data.usedunits}</Typography>
                   <Typography><strong>Available Units:</strong> {data.aunits}</Typography>
-
-                  <Button
-                    variant="contained"
-                    color="error"
-                    className="mt-3"
-                    onClick={() => handleDecrement(data.type)}
-                    disabled={data.aunits <= 0}
-                  >
-                    Decrement Unit
-                  </Button>
                 </CardContent>
               </Card>
             </Grid>
