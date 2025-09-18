@@ -37,8 +37,8 @@ export default function BloodRegistration() {
       gender: form.gender,
       org: form.organization, // ✅ Send organization from session
       age: form.age,
-      location: form.location
-    };
+      location: form.location 
+    }
 
     try {
       const res = await axios.post('http://localhost:2506/registerblooddonor', payload);

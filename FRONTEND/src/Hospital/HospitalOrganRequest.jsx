@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -8,30 +8,34 @@ import {
   MenuItem,
   Box,
   Container
-} from '@mui/material'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import axios from 'axios'
+} from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
+import config from '../config';
+
+const BASE_URL = `${config.url}`;
 
 export default function HospitalOrganRequest() {
-  const [hospital, setHospital] = useState('')
-  const [organ, setOrgan] = useState('')
-  const [bloodType, setBloodType] = useState('')
-  const [urgency, setUrgency] = useState('')
-  const [date, setDate] = useState('')
-  const [submittedRequests, setSubmittedRequests] = useState([])
+  const [hospital, setHospital] = useState('');
+  const [organ, setOrgan] = useState('');
+  const [bloodType, setBloodType] = useState('');
+  const [urgency, setUrgency] = useState('');
+  const [date, setDate] = useState('');
+  const [submittedRequests, setSubmittedRequests] = useState([]);
 
   useEffect(() => {
-    const nameFromStorage = sessionStorage.getItem('hospitalName') || 'Unknown Hospital'
-    setHospital(nameFromStorage)
-  }, [])
+    const nameFromStorage = sessionStorage.getItem('hospitalName') || 'Unknown Hospital';
+    setHospital(nameFromStorage);
+  }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+
     if (!organ || !bloodType || !urgency || !date) {
-      toast.error('Please fill all fields')
-      return
+      toast.error('Please fill all fields');
+      return;
     }
 
     const payload = {
@@ -41,20 +45,20 @@ export default function HospitalOrganRequest() {
       urgency,
       status: 'Pending',
       date
-    }
+    };
 
     try {
-      await axios.post('http://localhost:2506/addorganrequest', payload)
-      toast.success('Organ Request Submitted Successfully')
-      setOrgan('')
-      setBloodType('')
-      setUrgency('')
-      setDate('')
+      await axios.post(`${BASE_URL}/addorganrequest`, payload);
+      toast.success('Organ Request Submitted Successfully');
+      setOrgan('');
+      setBloodType('');
+      setUrgency('');
+      setDate('');
     } catch (error) {
-      console.error('Error submitting request:', error)
-      toast.error('Failed to submit request')
+      console.error('Error submitting request:', error);
+      toast.error('Failed to submit request');
     }
-  }
+  };
 
   return (
     <Container maxWidth="sm" className="mt-5 mb-5">
@@ -68,7 +72,7 @@ export default function HospitalOrganRequest() {
             label="Hospital Name"
             fullWidth
             value={hospital}
-            onChange={(e) => setHospital(e.target.value)}  // Made the field editable
+            onChange={(e) => setHospital(e.target.value)}
             variant="outlined"
           />
         </Box>
@@ -146,7 +150,7 @@ export default function HospitalOrganRequest() {
                       {req.hospital}
                     </Typography>
                     <Typography>Organ: <strong>{req.organ}</strong></Typography>
-                    <Typography>Blood Type: <strong>{req.bloodType}</strong></Typography>
+                    <Typography>Blood Type: <strong>{req.bloodtype}</strong></Typography>
                     <Typography>Urgency: <strong>{req.urgency}</strong></Typography>
                     <Typography>Date Needed: {req.date}</Typography>
                   </CardContent>
@@ -159,5 +163,5 @@ export default function HospitalOrganRequest() {
 
       <ToastContainer position="top-center" autoClose={3000} />
     </Container>
-  )
+  );
 }
