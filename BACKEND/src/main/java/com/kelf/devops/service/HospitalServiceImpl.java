@@ -129,5 +129,11 @@ public class HospitalServiceImpl implements HospitalService {
     public List<BloodData> getAvailabilityByType(String bloodType) {
         return bloodDataRepository.findByType1(bloodType);
     }
+    
+    
+    @Override
+    public List<RequestBlood> getAcceptedRequestsByHospital(String hospitalUsername) {
+        return requestBloodRepository.findByHospitalUsernameAndStatusIgnoreCase(hospitalUsername, "ACCEPTED");
+    }
 
 }

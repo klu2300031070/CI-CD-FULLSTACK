@@ -26,4 +26,6 @@ public interface HospitalService {
     
     
     List<BloodData> getAvailabilityByType(String bloodType);
+    
+    List<RequestBlood> getAcceptedRequestsByHospital(String hospitalUsername);
 }
