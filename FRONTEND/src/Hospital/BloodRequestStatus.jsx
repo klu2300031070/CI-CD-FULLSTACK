@@ -24,34 +24,37 @@ export default function BloodRequestStatus() {
     }
   }, [hospitalUsername]);
 
-  const fetchRequests = () => {
-    axios.get(`${BASE_URL}/hospitalapi/blood-requests/hospital/${hospitalUsername}`)
-      .then((res) => {
-        // Separate active (Pending or Requires Action)
-        const active = res.data.filter(req =>
-          req.status === 'Pending' || req.status === 'Requires Action'
-        );
-        // Separate closed (Accepted or Rejected)
-        const closed = res.data.filter(req =>
-          req.status === 'Accepted' || req.status === 'Rejected'
-        );
+  const fetchRequests = async () => {
+    try {
+      // Fetch all requests for this hospital
+      const resAll = await axios.get(`${BASE_URL}/hospitalapi/blood-requests/hospital/${hospitalUsername}`);
+      const allRequests = resAll.data;
 
-        const urgencyOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
-        
-        const sortByUrgencyAndDate = (list) => {
-          return list.sort((a, b) => {
-            if (urgencyOrder[b.urgency] !== urgencyOrder[a.urgency]) {
-              return urgencyOrder[b.urgency] - urgencyOrder[a.urgency];
-            } else {
-              return new Date(b.date) - new Date(a.date);
-            }
-          });
-        };
+      // Separate active vs closed
+      const active = allRequests.filter(req =>
+        req.status?.toUpperCase() === 'PENDING' || req.status?.toUpperCase() === 'REQUIRES ACTION'
+      );
 
-        setActiveRequests(sortByUrgencyAndDate(active));
-        setClosedRequests(sortByUrgencyAndDate(closed));
-      })
-      .catch((err) => console.error(err));
+      const closed = allRequests.filter(req =>
+        req.status?.toUpperCase() === 'ACCEPTED' || req.status?.toUpperCase() === 'REJECTED'
+      );
+
+      // Sort by urgency (HIGH > MEDIUM > LOW) and date descending
+      const urgencyOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+      const sortByUrgencyAndDate = (list) => list.sort((a, b) => {
+        if (urgencyOrder[b.urgency] !== urgencyOrder[a.urgency]) {
+          return urgencyOrder[b.urgency] - urgencyOrder[a.urgency];
+        } else {
+          return new Date(b.date) - new Date(a.date);
+        }
+      });
+
+      setActiveRequests(sortByUrgencyAndDate(active));
+      setClosedRequests(sortByUrgencyAndDate(closed));
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to fetch requests');
+    }
   };
 
   const handleDelete = async (id) => {
@@ -66,7 +69,7 @@ export default function BloodRequestStatus() {
     }
   };
 
-  const renderTable = (requests) => (
+  const renderTable = (requests, includeAcceptedOrg = false) => (
     <TableContainer component={Paper} className="shadow-sm" sx={{ mb: 4 }}>
       <Table>
         <TableHead className="table-dark">
@@ -77,6 +80,7 @@ export default function BloodRequestStatus() {
             <TableCell><b>Status</b></TableCell>
             <TableCell><b>Urgency</b></TableCell>
             <TableCell><b>Request Date</b></TableCell>
+            {includeAcceptedOrg && <TableCell><b>Accepted By</b></TableCell>}
             <TableCell><b>Actions</b></TableCell>
           </TableRow>
         </TableHead>
@@ -85,10 +89,11 @@ export default function BloodRequestStatus() {
             <TableRow key={req.id}>
               <TableCell>{req.patientName}</TableCell>
               <TableCell>{req.bloodGroup}</TableCell>
-              <TableCell>1</TableCell>
+              <TableCell>{req.unitsNeeded}</TableCell>
               <TableCell>{req.status}</TableCell>
               <TableCell>{req.urgency}</TableCell>
               <TableCell>{req.date}</TableCell>
+              {includeAcceptedOrg && <TableCell>{req.acceptedOrg || '-'}</TableCell>}
               <TableCell>
                 <Button 
                   variant="outlined" 
@@ -124,7 +129,7 @@ export default function BloodRequestStatus() {
         Closed Requests
       </Typography>
       {closedRequests.length > 0
-        ? renderTable(closedRequests)
+        ? renderTable(closedRequests, true)  // include acceptedOrg for closed requests
         : <Typography>No closed requests.</Typography>
       }
 

@@ -134,4 +134,13 @@ public class HospitalController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    
+    @GetMapping("/blood-requests/hospital/{username}/accepted")
+    public ResponseEntity<List<RequestBlood>> getAcceptedRequestsByHospital(@PathVariable String username) {
+        List<RequestBlood> accepted = hospitalService.getAcceptedRequestsByHospital(username);
+        if (accepted.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(accepted);
+        }
+        return ResponseEntity.ok(accepted);
+    }
 }
