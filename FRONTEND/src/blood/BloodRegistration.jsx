@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import config from './config';
 
 export default function BloodRegistration() {
   // ✅ Get organization name from session storage
@@ -37,11 +38,17 @@ export default function BloodRegistration() {
       gender: form.gender,
       org: form.organization, // ✅ Send organization from session
       age: form.age,
+<<<<<<< HEAD
       location: form.location 
     }
 
+=======
+      location: form.location
+    };
+    const baseUrl = `${config.url}`;
+>>>>>>> 816f774157f9e7c2b03ae8f4a3a86246d773ea71
     try {
-      const res = await axios.post('http://localhost:2506/registerblooddonor', payload);
+      const res = await axios.post(`${baseUrl}/registerblooddonor`, payload);
       toast.success('Donor record added successful!');
       console.log(res.data);
 

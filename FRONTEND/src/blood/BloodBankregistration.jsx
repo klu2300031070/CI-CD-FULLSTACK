@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import config from './config'
 
 export default function BloodBankRegistration() {
   const navigate = useNavigate()
@@ -53,9 +54,9 @@ export default function BloodBankRegistration() {
       toast.error('Password does not meet the criteria.')
       return
     }
-
+    const baseUrl = `${config.url}`;
     try {
-      const res = await axios.post('http://localhost:2506/registerbloodbank', form)
+      const res = await axios.post(`${baseUrl}/registerbloodbank`, form)
       toast.success(res)
 
       setForm({

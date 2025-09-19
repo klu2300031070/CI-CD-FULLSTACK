@@ -124,13 +124,5 @@ public class RequestBlood {
         this.hospitalUsername = hospitalUsername;
     }
 
-    @Override
-    public String toString() {
-        return "RequestBlood [id=" + id + ", bloodGroup=" + bloodGroup +
-               ", unitsNeeded=" + unitsNeeded + ", urgency=" + urgency +
-               ", status=" + status + ", date=" + date +
-               ", acceptedOrg=" + acceptedOrg + ", patientName=" + patientName +
-               ", patientAge=" + patientAge + ", patientInfo=" + patientInfo +
-               ", hospitalUsername=" + hospitalUsername + "]";
-    }
+    
 }

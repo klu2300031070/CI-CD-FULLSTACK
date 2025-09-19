@@ -1,4 +1,15 @@
+<<<<<<< HEAD
+=======
+/.metadata/
+
+>>>>>>> 816f774157f9e7c2b03ae8f4a3a86246d773ea71
 .metadata/
 *.log
 *.index
 *.zip
+<<<<<<< HEAD
+=======
+
+# Ignore Spring Boot application properties
+/src/main/resources/application.properties
+>>>>>>> 816f774157f9e7c2b03ae8f4a3a86246d773ea71

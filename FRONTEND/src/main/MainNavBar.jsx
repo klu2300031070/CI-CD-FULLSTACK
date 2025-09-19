@@ -14,10 +14,19 @@ import { useState } from 'react';
 import About from './About';
 import Contact from './ContactUs';
 import BloodLogin from './../blood/BloodLogin';
+<<<<<<< HEAD
 import OrganLogin from './../organs/OrganLogin';
 import HospitalRegistrationForm from '../Hospital/HospitalRegistrationForm';
 import HospitalLogin from '../Hospital/HospitalLogin';
 import BloodBankRegistration from '../blood/bloodbankregistration';
+=======
+
+import HospitalLogin from './../Hospital/HospitalLogin';
+import HospitalRegistrationForm from './../Hospital/HospitalRegistrationForm';
+import BloodBankRegistration from './../blood/BloodBankregistration';
+
+
+>>>>>>> 816f774157f9e7c2b03ae8f4a3a86246d773ea71
 export default function MainNavBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -93,7 +102,7 @@ export default function MainNavBar() {
         <Route path="/" element={<About />} />
         <Route path="/hospital-login" element={<HospitalLogin/>} />
         <Route path="/bloodbank-login" element={<BloodLogin />} />
-        <Route path="/organbank-login" element={<OrganLogin />} />
+ 
         <Route path="/hospital-registration" element={<HospitalRegistrationForm />} />
         <Route path="/contact" element={<Contact />} />
         <Route path='/bloodbankregister' element={<BloodBankRegistration/>} />

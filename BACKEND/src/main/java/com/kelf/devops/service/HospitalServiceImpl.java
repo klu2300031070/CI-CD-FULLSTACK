@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kelf.devops.model.BloodData;
 import com.kelf.devops.model.Hospital;
 import com.kelf.devops.model.RequestBlood;
+import com.kelf.devops.repository.BloodDataRepository;
 import com.kelf.devops.repository.HospitalRepository;
 import com.kelf.devops.repository.RequestBlooodRepisotory;
 
@@ -50,8 +52,6 @@ public class HospitalServiceImpl implements HospitalService {
             return null;
         }
         Hospital existingHospital = existingHospitalOpt.get();
-
-        // Update only editable fields
         existingHospital.setUsername(hospital.getUsername());
         existingHospital.setName(hospital.getName());
         existingHospital.setOwnerName(hospital.getOwnerName());
@@ -60,8 +60,6 @@ public class HospitalServiceImpl implements HospitalService {
         existingHospital.setContact(hospital.getContact());
         existingHospital.setEmail(hospital.getEmail());
         existingHospital.setLicenseNo(hospital.getLicenseNo());
-
-        // Update password only if provided (non-null and not empty)
         if (hospital.getPassword() != null && !hospital.getPassword().isEmpty()) {
             existingHospital.setPassword(hospital.getPassword());
         }
@@ -105,15 +103,13 @@ public class HospitalServiceImpl implements HospitalService {
             RequestBlood existing = optional.get();
             // Update only necessary fields, except id
             existing.setBloodGroup(requestBlood.getBloodGroup());
-            existing.setUnitsNeeded(requestBlood.getUnitsNeeded());
+         
             existing.setUrgency(requestBlood.getUrgency());
             existing.setStatus(requestBlood.getStatus());
             existing.setDate(requestBlood.getDate());
             existing.setAcceptedOrg(requestBlood.getAcceptedOrg());
-            existing.setPatientName(requestBlood.getPatientName());
-            existing.setPatientAge(requestBlood.getPatientAge());
-            existing.setPatientInfo(requestBlood.getPatientInfo());
-            existing.setHospitalUsername(requestBlood.getHospitalUsername());
+
+            
             return requestBloodRepository.save(existing);
         } else {
             return null;
@@ -123,6 +119,21 @@ public class HospitalServiceImpl implements HospitalService {
     @Override
     public void deleteRequest(Long id) {
         requestBloodRepository.deleteById(id);
+    }
+    
+    
+    @Autowired
+    private BloodDataRepository bloodDataRepository;
+
+    @Override
+    public List<BloodData> getAvailabilityByType(String bloodType) {
+        return bloodDataRepository.findByType1(bloodType);
+    }
+    
+    
+    @Override
+    public List<RequestBlood> getAcceptedRequestsByHospital(String hospitalUsername) {
+        return requestBloodRepository.findByHospitalUsernameAndStatusIgnoreCase(hospitalUsername, "ACCEPTED");
     }
 
 }

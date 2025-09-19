@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
-  Card, CardContent, Typography, Grid, Button, CircularProgress
+  Card, CardContent, Typography, Grid,  CircularProgress
 } from '@mui/material';
+import config from './config';
 
 export default function BloodBankDashboard() {
   const [bloodData, setBloodData] = useState([]);
@@ -11,9 +12,9 @@ export default function BloodBankDashboard() {
   useEffect(() => {
   fetchBloodData();
 }, []);
-
+ const baseUrl = `${config.url}`;
 const fetchBloodData = () => {
-  axios.get('http://localhost:2506/viewallblooddata')
+  axios.get(`${baseUrl}/viewallblooddata`)
     .then((res) => {
       const bloodUser = JSON.parse(sessionStorage.getItem('Blood_user'));
       const orgName = bloodUser?.name;
@@ -67,16 +68,6 @@ const fetchBloodData = () => {
                   <Typography><strong>Donated Units:</strong> {data.donatedunits}</Typography>
                   <Typography><strong>Used Units:</strong> {data.usedunits}</Typography>
                   <Typography><strong>Available Units:</strong> {data.aunits}</Typography>
-
-                  <Button
-                    variant="contained"
-                    color="error"
-                    className="mt-3"
-                    onClick={() => handleDecrement(data.type)}
-                    disabled={data.aunits <= 0}
-                  >
-                    Decrement Unit
-                  </Button>
                 </CardContent>
               </Card>
             </Grid>

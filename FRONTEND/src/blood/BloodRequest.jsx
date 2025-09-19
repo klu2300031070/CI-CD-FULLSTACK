@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -11,6 +11,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
+import config from './config';
 
 export default function BloodRequests() {
   const [requests, setRequests] = useState([]);
@@ -27,13 +28,13 @@ export default function BloodRequests() {
       toast.error('Blood user not found in session storage');
     }
   }, []);
-
+  const baseUrl = `${config.url}`;
   const fetchPendingRequests = () => {
     axios
-      .get('http://localhost:2506/viewallrequests')
+      .get(`${baseUrl}/viewallrequests`)
       .then((res) => {
         const pendingRequests = res.data.filter(
-          (req) => req.status === 'Pending'
+          (req) => req.status?.toUpperCase() === 'PENDING'
         );
         setRequests(pendingRequests);
         setLoading(false);
@@ -47,11 +48,10 @@ export default function BloodRequests() {
 
   const fetchAcceptedRequests = () => {
     axios
-      .get('http://localhost:2506/viewallrequests')
+      .get(`${baseUrl}/viewallrequests`)
       .then((res) => {
         const accepted = res.data.filter(
-          (req) =>
-            req.status === 'Accepted'
+          (req) => req.status?.toUpperCase() === 'ACCEPTED'
         );
         setAcceptedRequests(accepted);
       })
@@ -64,12 +64,12 @@ export default function BloodRequests() {
     try {
       const payload = {
         id: id,
-        status: 'Accepted',
-        acceptedorg: bloodUser?.name,
+        status: 'ACCEPTED',
+        acceptedOrg: bloodUser?.name,
       };
 
       const res = await axios.put(
-        'http://localhost:2506/updatebloodstatus',
+        `${baseUrl}/updatebloodstatus`,
         payload
       );
 
@@ -81,7 +81,7 @@ export default function BloodRequests() {
 
       setAcceptedRequests((prev) => [
         ...prev,
-        { ...acceptedReq, status: 'Accepted', acceptedorg: bloodUser.name },
+        { ...acceptedReq, status: 'ACCEPTED', acceptedOrg: bloodUser.name },
       ]);
     } catch (err) {
       console.error('Failed to accept request:', err);
@@ -107,7 +107,9 @@ export default function BloodRequests() {
           <CircularProgress />
         </Box>
       ) : requests.length === 0 ? (
-        <Typography className="text-center">No pending requests found.</Typography>
+        <Typography className="text-center">
+          No pending requests found.
+        </Typography>
       ) : (
         <div className="row">
           {requests.map((req) => (
@@ -115,16 +117,22 @@ export default function BloodRequests() {
               <Card className="shadow h-100">
                 <CardContent>
                   <Typography variant="h6" className="mb-2 text-primary">
-                    {req.hospital}
+                    {req.hospitalUsername} 
                   </Typography>
                   <Typography>
-                    Blood Needed: <strong>{req.bloodtype}</strong>
+                    Blood Needed: <strong>{req.bloodGroup}</strong>
+                  </Typography>
+                  <Typography>
+                    Units: <strong>{req.unitsNeeded}</strong>
                   </Typography>
                   <Typography>
                     Urgency: <strong>{req.urgency}</strong>
                   </Typography>
                   <Typography>
                     Date: <strong>{req.date}</strong>
+                  </Typography>
+                  <Typography>
+                    Patient: <strong>{req.patientName} ({req.patientAge} yrs)</strong>
                   </Typography>
 
                   <Box mt={3} display="flex" justifyContent="center">
@@ -159,6 +167,7 @@ export default function BloodRequests() {
               <th>Date</th>
               <th>Urgency</th>
               <th>Blood Type</th>
+              <th>Units</th>
               <th>Hospital</th>
               <th>Accepted By</th>
             </tr>
@@ -169,9 +178,10 @@ export default function BloodRequests() {
                 <td>{req.id}</td>
                 <td>{req.date}</td>
                 <td>{req.urgency}</td>
-                <td>{req.bloodtype}</td>
-                <td>{req.hospital}</td>
-                <td>{req.acceptedorg}</td>
+                <td>{req.bloodGroup}</td> 
+                <td>{req.unitsNeeded}</td> 
+                <td>{req.hospitalUsername}</td> 
+                <td>{req.acceptedOrg}</td>
               </tr>
             ))}
           </tbody>

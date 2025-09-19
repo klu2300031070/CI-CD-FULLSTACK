@@ -6,6 +6,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 import { useAuth } from '../contextapi/AuthContext' // Your context
 import { useNavigate, Link } from 'react-router-dom'
+<<<<<<< HEAD
+=======
+import config from './config'
+>>>>>>> 816f774157f9e7c2b03ae8f4a3a86246d773ea71
 
 export default function BloodLogin() {
   const [loginData, setLoginData] = useState({ username: '', password: '' })
@@ -15,12 +19,12 @@ export default function BloodLogin() {
   const handleChange = (e) => {
     setLoginData({ ...loginData, [e.target.name]: e.target.value })
   }
-
+  const baseUrl = `${config.url}`;
   const handleLogin = async (e) => {
     e.preventDefault()
 
     try {
-      const res = await axios.post('http://localhost:2506/checkbloodbanklogin', loginData)
+      const res = await axios.post(`${baseUrl}/checkbloodbanklogin`, loginData)
 
       // Assuming backend returns the BloodBank object on successful login
       if (res.status === 200 && res.data) {

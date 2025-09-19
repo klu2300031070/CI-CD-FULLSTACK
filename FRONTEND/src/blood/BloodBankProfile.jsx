@@ -1,5 +1,3 @@
-// src/pages/BloodProfile.js
-
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, Typography, Box, Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
@@ -15,14 +13,14 @@ export default function BloodProfile() {
     email: '',
     phone: '',
     address: '',
-    // Add any other properties from your BloodBank model
+    
   })
 
   useEffect(() => {
     const userData = JSON.parse(sessionStorage.getItem('Blood_user'))
 
     if (!userData) {
-      navigate('/bloodlogin') // Redirect if not logged in
+      navigate('/bloodlogin') 
     } else {
       setProfile({
         id: userData.id,
@@ -31,7 +29,7 @@ export default function BloodProfile() {
         email: userData.email,
         phone: userData.phone,
         location: userData.location,
-        // Add other fields if needed
+      
       })
     }
   }, [navigate])
