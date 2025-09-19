@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.kelf.devops.model.BloodData;
 import com.kelf.devops.model.Hospital;
 import com.kelf.devops.model.RequestBlood;
+import com.kelf.devops.repository.BloodDataRepository;
 import com.kelf.devops.repository.HospitalRepository;
 import com.kelf.devops.repository.RequestBlooodRepisotory;
 
@@ -117,6 +119,15 @@ public class HospitalServiceImpl implements HospitalService {
     @Override
     public void deleteRequest(Long id) {
         requestBloodRepository.deleteById(id);
+    }
+    
+    
+    @Autowired
+    private BloodDataRepository bloodDataRepository;
+
+    @Override
+    public List<BloodData> getAvailabilityByType(String bloodType) {
+        return bloodDataRepository.findByType1(bloodType);
     }
 
 }

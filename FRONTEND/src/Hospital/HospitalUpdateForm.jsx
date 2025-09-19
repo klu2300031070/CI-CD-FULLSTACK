@@ -78,7 +78,7 @@ export default function HospitalUpdateForm() {
     const updatedHospital = response.data || form
     sessionStorage.setItem('Hospital_user', JSON.stringify(updatedHospital))
 
-    navigate('/hospital-dashboard')
+    navigate('/blood-request-status')
   } catch (error) {
     console.error(error)
     toast.error('Update failed. Please check the inputs or try again.')

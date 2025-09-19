@@ -55,7 +55,7 @@ export default function HospitalLogin() {
         setIsHospitalLoggedIn(true);
         setIsOrganBankLoggedIn(false);
 
-        navigate('/hospital-dashboard');
+        navigate('/blood-request-status');
       }
     } catch (error) {
       if (error.response && error.response.status === 401) {

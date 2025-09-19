@@ -4,3 +4,6 @@
 *.log
 *.index
 *.zip
+
+# Ignore Spring Boot application properties
+/src/main/resources/application.properties
