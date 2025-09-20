@@ -20,15 +20,10 @@ import com.kelf.devops.model.BloodBank;
 import com.kelf.devops.model.BloodData;
 import com.kelf.devops.model.BloodDonor;
 import com.kelf.devops.model.RequestBlood;
-import com.kelf.devops.repository.BloodBankRepository;
 import com.kelf.devops.repository.BloodDataRepository;
-<<<<<<< HEAD
-=======
 import com.kelf.devops.repository.BloodDonorRepository;
 import com.kelf.devops.repository.RequestBlooodRepisotory;
-import com.kelf.devops.service.BloodBankService;
 import com.kelf.devops.service.BloodBankServiceimpl;
->>>>>>> 816f774157f9e7c2b03ae8f4a3a86246d773ea71
 
 @RestController
 @RequestMapping("/bloodbankapi")
@@ -171,8 +166,7 @@ public class BloodBankController {
 	 	}
 	 }
 	 
-<<<<<<< HEAD
-=======
+
 	 @PostMapping("/addbloodrequest")
 	 public ResponseEntity<String> addbloodrequest(@RequestBody RequestBlood r){
 		 try
@@ -261,6 +255,6 @@ public class BloodBankController {
 	    }
 
 	 
->>>>>>> 816f774157f9e7c2b03ae8f4a3a86246d773ea71
+
 
 }

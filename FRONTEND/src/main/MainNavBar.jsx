@@ -15,16 +15,19 @@ import About from './About';
 import Contact from './ContactUs';
 import BloodLogin from './../blood/BloodLogin';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import OrganLogin from './../organs/OrganLogin';
 import HospitalRegistrationForm from '../Hospital/HospitalRegistrationForm';
 import HospitalLogin from '../Hospital/HospitalLogin';
 import BloodBankRegistration from '../blood/bloodbankregistration';
 =======
 
+=======
+>>>>>>> 428ac161998b3c09d471f334dcd995356ae71f53
 import HospitalLogin from './../Hospital/HospitalLogin';
 import HospitalRegistrationForm from './../Hospital/HospitalRegistrationForm';
 import BloodBankRegistration from './../blood/BloodBankregistration';
-
+import AdminLogin from './../admin/AdminLogin';
 
 >>>>>>> 816f774157f9e7c2b03ae8f4a3a86246d773ea71
 export default function MainNavBar() {
@@ -87,7 +90,7 @@ export default function MainNavBar() {
               <MenuItem component={Link} to="/bloodbank-login" onClick={handleClose}>
                 Blood Bank
               </MenuItem>
-              <MenuItem component={Link} to="/organbank-login" onClick={handleClose}>
+              <MenuItem component={Link} to="/admin-login" onClick={handleClose}> 
                 Admin
               </MenuItem>
             </Menu>
@@ -100,12 +103,12 @@ export default function MainNavBar() {
 
       <Routes>
         <Route path="/" element={<About />} />
-        <Route path="/hospital-login" element={<HospitalLogin/>} />
+        <Route path="/hospital-login" element={<HospitalLogin />} />
         <Route path="/bloodbank-login" element={<BloodLogin />} />
- 
+        <Route path="/admin-login" element={<AdminLogin />} /> 
         <Route path="/hospital-registration" element={<HospitalRegistrationForm />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path='/bloodbankregister' element={<BloodBankRegistration/>} />
+        <Route path="/bloodbankregister" element={<BloodBankRegistration />} />
       </Routes>
     </Box>
   );
