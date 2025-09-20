@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Container, Typography, TableContainer, Table, TableHead,
-  TableRow, TableCell, TableBody, Paper, Box, Button
+  TableRow, TableCell, TableBody, Paper, Button
 } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -19,35 +19,25 @@ export default function BloodRequestStatus() {
   const [closedRequests, setClosedRequests] = useState([]);
 
   useEffect(() => {
-    if (hospitalUsername) {
-      fetchRequests();
-    }
+    if (hospitalUsername) fetchRequests();
   }, [hospitalUsername]);
 
   const fetchRequests = async () => {
     try {
-      // Fetch all requests for this hospital
       const resAll = await axios.get(`${BASE_URL}/hospitalapi/blood-requests/hospital/${hospitalUsername}`);
       const allRequests = resAll.data;
 
-      // Separate active vs closed
-      const active = allRequests.filter(req =>
+      const active = allRequests.filter(req => 
         req.status?.toUpperCase() === 'PENDING' || req.status?.toUpperCase() === 'REQUIRES ACTION'
       );
-
-      const closed = allRequests.filter(req =>
+      const closed = allRequests.filter(req => 
         req.status?.toUpperCase() === 'ACCEPTED' || req.status?.toUpperCase() === 'REJECTED'
       );
 
-      // Sort by urgency (HIGH > MEDIUM > LOW) and date descending
       const urgencyOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
-      const sortByUrgencyAndDate = (list) => list.sort((a, b) => {
-        if (urgencyOrder[b.urgency] !== urgencyOrder[a.urgency]) {
-          return urgencyOrder[b.urgency] - urgencyOrder[a.urgency];
-        } else {
-          return new Date(b.date) - new Date(a.date);
-        }
-      });
+      const sortByUrgencyAndDate = list => list.sort((a, b) => 
+        urgencyOrder[b.urgency] - urgencyOrder[a.urgency] || new Date(b.date) - new Date(a.date)
+      );
 
       setActiveRequests(sortByUrgencyAndDate(active));
       setClosedRequests(sortByUrgencyAndDate(closed));
@@ -69,7 +59,7 @@ export default function BloodRequestStatus() {
     }
   };
 
-  const renderTable = (requests, includeAcceptedOrg = false) => (
+  const renderTable = (requests, showDelete = false) => (
     <TableContainer component={Paper} className="shadow-sm" sx={{ mb: 4 }}>
       <Table>
         <TableHead className="table-dark">
@@ -80,12 +70,11 @@ export default function BloodRequestStatus() {
             <TableCell><b>Status</b></TableCell>
             <TableCell><b>Urgency</b></TableCell>
             <TableCell><b>Request Date</b></TableCell>
-            {includeAcceptedOrg && <TableCell><b>Accepted By</b></TableCell>}
-            <TableCell><b>Actions</b></TableCell>
+            {showDelete && <TableCell><b>Actions</b></TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
-          {requests.map((req) => (
+          {requests.map(req => (
             <TableRow key={req.id}>
               <TableCell>{req.patientName}</TableCell>
               <TableCell>{req.bloodGroup}</TableCell>
@@ -93,17 +82,18 @@ export default function BloodRequestStatus() {
               <TableCell>{req.status}</TableCell>
               <TableCell>{req.urgency}</TableCell>
               <TableCell>{req.date}</TableCell>
-              {includeAcceptedOrg && <TableCell>{req.acceptedOrg || '-'}</TableCell>}
-              <TableCell>
-                <Button 
-                  variant="outlined" 
-                  color="secondary" 
-                  size="small" 
-                  onClick={() => handleDelete(req.id)}
-                >
-                  Delete
-                </Button>
-              </TableCell>
+              {showDelete && (
+                <TableCell>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    size="small"
+                    onClick={() => handleDelete(req.id)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>
@@ -121,7 +111,7 @@ export default function BloodRequestStatus() {
         Active Requests
       </Typography>
       {activeRequests.length > 0 
-        ? renderTable(activeRequests) 
+        ? renderTable(activeRequests, true) 
         : <Typography>No active requests.</Typography>
       }
 
@@ -129,7 +119,7 @@ export default function BloodRequestStatus() {
         Closed Requests
       </Typography>
       {closedRequests.length > 0
-        ? renderTable(closedRequests, true)  // include acceptedOrg for closed requests
+        ? renderTable(closedRequests, false) 
         : <Typography>No closed requests.</Typography>
       }
 

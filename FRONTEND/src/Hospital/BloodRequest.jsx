@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import {
-  Card, CardContent, Typography, TextField, MenuItem,
+  Card, Typography, TextField, MenuItem,
   Button, Box, Container
 } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import config from './config';
 import { useNavigate } from 'react-router-dom';
+import config from './config';
 
 const BASE_URL = `${config.url}`;
+const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+const URGENCY_LEVELS = ['LOW', 'MEDIUM', 'HIGH'];
 
 export default function BloodRequest() {
   const [form, setForm] = useState({
@@ -22,27 +23,20 @@ export default function BloodRequest() {
     patientInfo: ''
   });
 
-  const hospitalUserJson = sessionStorage.getItem('Hospital_user');
-  const username = hospitalUserJson ? JSON.parse(hospitalUserJson).username : null;
-
   const navigate = useNavigate();
+  const hospitalUser = JSON.parse(sessionStorage.getItem('Hospital_user') || '{}');
+  const username = hospitalUser.username || null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({
       ...prev,
-      [name]: (name === 'patientAge' || name === 'unitsNeeded') ? Number(value) : value
+      [name]: ['patientAge', 'unitsNeeded'].includes(name) ? Number(value) : value
     }));
   };
 
-  // Function to get current date in YYYY-MM-DD format
-  const getCurrentDate = () => {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = (`0${date.getMonth() + 1}`).slice(-2);
-    const day = (`0${date.getDate()}`).slice(-2);
-    return `${year}-${month}-${day}`;
-  };
+  const getCurrentDate = () =>
+    new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,27 +49,15 @@ export default function BloodRequest() {
     const payload = {
       ...form,
       hospitalUsername: username,
-      date: getCurrentDate(), // Add current date automatically
-      status: 'Pending'       // Set status as Pending by default
+      date: getCurrentDate(),
+      status: 'Pending'
     };
 
     try {
       await axios.post(`${BASE_URL}/hospitalapi/blood-requests`, payload);
       toast.success('Blood Request Submitted Successfully');
-
-      // Reset form
-      setForm({
-        bloodGroup: '',
-        unitsNeeded: '',
-        urgency: 'LOW',
-        patientName: '',
-        patientAge: '',
-        patientInfo: ''
-      });
-
-      // Redirect to blood request status page
+      setForm({ bloodGroup: '', unitsNeeded: '', urgency: 'LOW', patientName: '', patientAge: '', patientInfo: '' });
       navigate('/blood-request-status');
-
     } catch (error) {
       console.error(error);
       toast.error('Failed to submit blood request');
@@ -85,89 +67,84 @@ export default function BloodRequest() {
   return (
     <Container maxWidth="sm" className="mt-5 mb-5">
       <Card className="shadow-sm p-4">
-        <Typography variant="h4" className="text-center text-primary mb-4">
+        <Typography variant="h4" align="center" color="primary" gutterBottom>
           Blood Request Form
         </Typography>
 
         <form onSubmit={handleSubmit}>
+          {/* Blood Group */}
           <Box mb={3}>
             <TextField
-              select
-              fullWidth
+              select fullWidth required
               label="Select Blood Group"
               name="bloodGroup"
               value={form.bloodGroup}
               onChange={handleChange}
-              required
             >
-              {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(group => (
+              {BLOOD_GROUPS.map(group => (
                 <MenuItem key={group} value={group}>{group}</MenuItem>
               ))}
             </TextField>
           </Box>
 
+          {/* Units Needed */}
           <Box mb={3}>
             <TextField
-              fullWidth
-              type="number"
+              fullWidth required type="number"
               label="Units Needed"
               name="unitsNeeded"
               value={form.unitsNeeded}
               onChange={handleChange}
-              required
               inputProps={{ min: 1 }}
             />
           </Box>
 
+          {/* Urgency */}
           <Box mb={3}>
             <TextField
-              select
-              fullWidth
+              select fullWidth required
               label="Urgency Level"
               name="urgency"
               value={form.urgency}
               onChange={handleChange}
-              required
             >
-              {['LOW', 'MEDIUM', 'HIGH'].map(level => (
+              {URGENCY_LEVELS.map(level => (
                 <MenuItem key={level} value={level}>{level}</MenuItem>
               ))}
             </TextField>
           </Box>
 
+          {/* Patient Name */}
           <Box mb={3}>
             <TextField
-              fullWidth
+              fullWidth required
               label="Patient Name"
               name="patientName"
               value={form.patientName}
               onChange={handleChange}
-              required
             />
           </Box>
 
+          {/* Patient Age */}
           <Box mb={3}>
             <TextField
-              fullWidth
-              type="number"
+              fullWidth required type="number"
               label="Patient Age"
               name="patientAge"
               value={form.patientAge}
               onChange={handleChange}
-              required
               inputProps={{ min: 0 }}
             />
           </Box>
 
+          {/* Patient Info */}
           <Box mb={4}>
             <TextField
-              fullWidth
+              fullWidth multiline rows={3}
               label="Additional Patient Info"
               name="patientInfo"
               value={form.patientInfo}
               onChange={handleChange}
-              multiline
-              rows={3}
             />
           </Box>
 
