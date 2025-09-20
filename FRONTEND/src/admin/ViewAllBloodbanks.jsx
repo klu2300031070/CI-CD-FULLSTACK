@@ -5,6 +5,7 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap
 
 export default function ViewAllBloodbanks() {
   const [bloodbanks, setBloodbanks] = useState([]);
@@ -13,7 +14,7 @@ export default function ViewAllBloodbanks() {
   const fetchBloodbanks = async () => {
     try {
       const response = await axios.get(`${config.url}/admin/bloodbanks`);
-      console.log("Blood banks fetched:", response.data); // debug
+      console.log("Blood banks fetched:", response.data);
       setBloodbanks(response.data);
       setError("");
     } catch (err) {
@@ -30,7 +31,7 @@ export default function ViewAllBloodbanks() {
     try {
       const response = await axios.delete(`${config.url}/admin/bloodbank/${id}`);
       toast.success(response.data);
-      fetchBloodbanks(); // refresh table
+      fetchBloodbanks();
     } catch (err) {
       console.error(err);
       toast.error("Deletion failed: " + err.message);
@@ -39,47 +40,54 @@ export default function ViewAllBloodbanks() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h3 style={{ textAlign: "center", color: "black", fontWeight: "bolder" }}>
+    <div className="container my-4">
+      <h3 className="text-center fw-bold text-dark">
         <u>View All Blood Banks</u>
       </h3>
       <ToastContainer position="top-center" autoClose={4000} />
+
       {error && (
-        <p style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold", color: "red" }}>
-          {error}
-        </p>
+        <p className="text-center fs-5 fw-bold text-danger">{error}</p>
       )}
+
       {bloodbanks.length > 0 ? (
-        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Blood Bank Name</th>
-              <th>Location</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bloodbanks.map((bank) => (
-              <tr key={bank.id}>
-                <td>{bank.id}</td>
-                <td>{bank.name}</td>
-                <td>{bank.location}</td>
-                <td>
-                  <Button
-                    variant="outlined"
-                    startIcon={<DeleteIcon />}
-                    onClick={() => deleteBloodBank(bank.id)}
-                  >
-                    Delete
-                  </Button>
-                </td>
+        <div className="table-responsive">
+          <table className="table table-bordered table-hover mt-3 shadow-sm">
+            <thead className="table-primary text-center">
+              <tr>
+                <th>ID</th>
+                <th>Blood Bank Name</th>
+                <th>Location</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="align-middle text-center">
+              {bloodbanks.map((bank) => (
+                <tr key={bank.id}>
+                  <td>{bank.id}</td>
+                  <td>{bank.name}</td>
+                  <td>{bank.location}</td>
+                  <td>
+                    <Button
+                      variant="outlined"
+                      color="error"
+                      startIcon={<DeleteIcon />}
+                      onClick={() => deleteBloodBank(bank.id)}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
-        !error && <p style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold", color: "red" }}>No Blood Bank Data Found</p>
+        !error && (
+          <p className="text-center fs-5 fw-bold text-danger">
+            No Blood Bank Data Found
+          </p>
+        )
       )}
     </div>
   );
