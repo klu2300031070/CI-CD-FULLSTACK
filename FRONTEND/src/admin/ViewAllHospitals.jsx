@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "bootstrap/dist/css/bootstrap.min.css"; 
+import "bootstrap/dist/css/bootstrap.min.css"; // ensure bootstrap is imported
 
 export default function ViewAllHospitals() {
   const [hospitals, setHospitals] = useState([]);
@@ -19,7 +19,7 @@ export default function ViewAllHospitals() {
       setError("");
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch hospitals...!!! " + err.message);
+      setError("Failed to fetch hospitals. " + err.message);
     }
   };
 

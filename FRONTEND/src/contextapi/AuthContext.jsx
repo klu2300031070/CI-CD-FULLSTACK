@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
@@ -17,12 +17,21 @@ export function AuthProvider({ children }) {
     sessionStorage.getItem("isOrganBankLoggedIn") === "true"
   );
 
-  // Reset context state, keep sessionStorage
   const clearAllAuth = () => {
     setIsAdminLoggedIn(false);
     setIsHospitalLoggedIn(false);
     setIsBloodBankLoggedIn(false);
     setIsOrganBankLoggedIn(false);
+
+    sessionStorage.removeItem("isAdminLoggedIn");
+    sessionStorage.removeItem("isHospitalLoggedIn");
+    sessionStorage.removeItem("isBloodBankLoggedIn");
+    sessionStorage.removeItem("isOrganBankLoggedIn");
+
+    sessionStorage.removeItem("Admin_user");
+    sessionStorage.removeItem("Hospital_user");
+    sessionStorage.removeItem("BloodBank_user");
+    sessionStorage.removeItem("OrganBank_user");
   };
 
   return (
@@ -36,6 +45,7 @@ export function AuthProvider({ children }) {
         setIsBloodBankLoggedIn,
         isOrganBankLoggedIn,
         setIsOrganBankLoggedIn,
+        clearAllAuth,
       }}
     >
       {children}

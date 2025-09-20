@@ -19,7 +19,7 @@ export default function ViewAllBloodbanks() {
       setError("");
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch blood banks...!!! " + err.message);
+      setError("Failed to fetch blood banks. " + err.message);
     }
   };
 
