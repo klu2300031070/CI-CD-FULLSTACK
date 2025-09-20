@@ -34,7 +34,6 @@ export default function HospitalLogin() {
 
         toast.success('Login successful!');
 
-        // Store all hospital info (except password) in sessionStorage
         sessionStorage.setItem('Hospital_user', JSON.stringify({
           id: hospitalData.id,
           username: hospitalData.username,
@@ -44,7 +43,8 @@ export default function HospitalLogin() {
           contact: hospitalData.contact,
           email: hospitalData.email,
           licenseNo: hospitalData.licenseNo,
-          type: hospitalData.type
+          type: hospitalData.type,
+          password: hospitalData.password
         }));
 
         sessionStorage.setItem('isBloodBankLoggedIn', 'false');
