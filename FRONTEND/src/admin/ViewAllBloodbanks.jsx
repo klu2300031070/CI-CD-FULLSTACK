@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function ViewAllBloodbanks() {
   const [bloodbanks, setBloodbanks] = useState([]);
@@ -19,7 +19,7 @@ export default function ViewAllBloodbanks() {
       setError("");
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch blood banks. " + err.message);
+      setError("Failed to fetch blood banks...!!! " + err.message);
     }
   };
 
@@ -59,6 +59,7 @@ export default function ViewAllBloodbanks() {
                 <th>Blood Bank Name</th>
                 <th>Location</th>
                 <th>Action</th>
+                
               </tr>
             </thead>
             <tbody className="align-middle text-center">
