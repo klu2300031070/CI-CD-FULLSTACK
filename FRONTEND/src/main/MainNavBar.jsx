@@ -14,9 +14,10 @@ import { useState } from 'react';
 import About from './About';
 import Contact from './ContactUs';
 import BloodLogin from './../blood/BloodLogin';
-import OrganLogin from './../organs/OrganLogin';
-import HospitalRegistrationForm from '../Hospital/HospitalRegistrationForm';
-import HospitalLogin from '../Hospital/HospitalLogin';
+import HospitalLogin from './../Hospital/HospitalLogin';
+import HospitalRegistrationForm from './../Hospital/HospitalRegistrationForm';
+import BloodBankRegistration from './../blood/BloodBankregistration';
+import AdminLogin from './../admin/AdminLogin';
 
 export default function MainNavBar() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -78,7 +79,7 @@ export default function MainNavBar() {
               <MenuItem component={Link} to="/bloodbank-login" onClick={handleClose}>
                 Blood Bank
               </MenuItem>
-              <MenuItem component={Link} to="/organbank-login" onClick={handleClose}>
+              <MenuItem component={Link} to="/admin-login" onClick={handleClose}> 
                 Admin
               </MenuItem>
             </Menu>
@@ -91,11 +92,12 @@ export default function MainNavBar() {
 
       <Routes>
         <Route path="/" element={<About />} />
-        <Route path="/hospital-login" element={<HospitalLogin/>} />
+        <Route path="/hospital-login" element={<HospitalLogin />} />
         <Route path="/bloodbank-login" element={<BloodLogin />} />
-        <Route path="/organbank-login" element={<OrganLogin />} />
+        <Route path="/admin-login" element={<AdminLogin />} /> 
         <Route path="/hospital-registration" element={<HospitalRegistrationForm />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/bloodbankregister" element={<BloodBankRegistration />} />
       </Routes>
     </Box>
   );

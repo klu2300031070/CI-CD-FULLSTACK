@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import com.kelf.devops.model.BloodData;
 import com.kelf.devops.model.Hospital;
 import com.kelf.devops.model.RequestBlood;
 import com.kelf.devops.repository.RequestBlooodRepisotory;
@@ -118,5 +119,28 @@ public class HospitalController {
     public ResponseEntity<?> deleteRequest(@PathVariable Long id) {
         hospitalService.deleteRequest(id);
         return ResponseEntity.ok("Request deleted successfully!");
+    }
+    
+    
+    @GetMapping("/blood-availability/{bloodType}")
+    public ResponseEntity<List<BloodData>> getAvailabilityByType(@PathVariable String bloodType) {
+        try {
+            List<BloodData> data = hospitalService.getAvailabilityByType(bloodType);
+            if (data.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    @GetMapping("/blood-requests/hospital/{username}/accepted")
+    public ResponseEntity<List<RequestBlood>> getAcceptedRequestsByHospital(@PathVariable String username) {
+        List<RequestBlood> accepted = hospitalService.getAcceptedRequestsByHospital(username);
+        if (accepted.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(accepted);
+        }
+        return ResponseEntity.ok(accepted);
     }
 }

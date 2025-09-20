@@ -2,6 +2,7 @@ package com.kelf.devops.service;
 
 import java.util.List;
 
+import com.kelf.devops.model.BloodData;
 import com.kelf.devops.model.Hospital;
 import com.kelf.devops.model.RequestBlood;
 
@@ -22,4 +23,9 @@ public interface HospitalService {
     List<RequestBlood> getRequestsByStatus(String status);
     RequestBlood updateRequest(Long id, RequestBlood requestBlood);
     void deleteRequest(Long id);
+    
+    
+    List<BloodData> getAvailabilityByType(String bloodType);
+    
+    List<RequestBlood> getAcceptedRequestsByHospital(String hospitalUsername);
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Card, CardContent, Typography, TextField, MenuItem,
   Button, Box, Container
@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import config from './config';
+import { useNavigate } from 'react-router-dom';
 
 const BASE_URL = `${config.url}`;
 
@@ -21,25 +22,10 @@ export default function BloodRequest() {
     patientInfo: ''
   });
 
-  const [submittedRequests, setSubmittedRequests] = useState([]);
-
   const hospitalUserJson = sessionStorage.getItem('Hospital_user');
   const username = hospitalUserJson ? JSON.parse(hospitalUserJson).username : null;
 
-  useEffect(() => {
-    if (username) {
-      fetchRequests(username);
-    }
-  }, [username]);
-
-  const fetchRequests = async (username) => {
-    try {
-      const res = await axios.get(`${BASE_URL}/hospitalapi/blood-requests/hospital/${username}`);
-      setSubmittedRequests(res.data);
-    } catch (error) {
-      console.error('Failed to fetch requests', error);
-    }
-  };
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,6 +62,8 @@ export default function BloodRequest() {
     try {
       await axios.post(`${BASE_URL}/hospitalapi/blood-requests`, payload);
       toast.success('Blood Request Submitted Successfully');
+
+      // Reset form
       setForm({
         bloodGroup: '',
         unitsNeeded: '',
@@ -84,21 +72,13 @@ export default function BloodRequest() {
         patientAge: '',
         patientInfo: ''
       });
-      fetchRequests(username);
+
+      // Redirect to blood request status page
+      navigate('/blood-request-status');
+
     } catch (error) {
       console.error(error);
       toast.error('Failed to submit blood request');
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`${BASE_URL}/hospitalapi/blood-requests/${id}`);
-      toast.success('Request deleted successfully');
-      fetchRequests(username);
-    } catch (error) {
-      console.error(error);
-      toast.error('Failed to delete request');
     }
   };
 
@@ -196,37 +176,6 @@ export default function BloodRequest() {
           </Button>
         </form>
       </Card>
-
-      {submittedRequests.length > 0 && (
-        <div className="mt-5">
-          <Typography variant="h5" className="text-center text-success mb-4">
-            Submitted Blood Requests
-          </Typography>
-
-          {submittedRequests.map((req) => (
-            <Card key={req.id} className="mb-3 shadow-sm">
-              <CardContent>
-                <Typography><strong>Blood Group:</strong> {req.bloodGroup}</Typography>
-                <Typography><strong>Units Needed:</strong> {req.unitsNeeded}</Typography>
-                <Typography><strong>Urgency:</strong> {req.urgency}</Typography>
-                <Typography><strong>Patient Name:</strong> {req.patientName}</Typography>
-                <Typography><strong>Patient Age:</strong> {req.patientAge}</Typography>
-                <Typography><strong>Status:</strong> {req.status}</Typography>
-                {req.acceptedOrg && (
-                  <Typography><strong>Accepted by Organ Bank:</strong> {req.acceptedOrg}</Typography>
-                )}
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => handleDelete(req.id)}
-                >
-                  Delete
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
 
       <ToastContainer position="top-center" autoClose={3000} />
     </Container>

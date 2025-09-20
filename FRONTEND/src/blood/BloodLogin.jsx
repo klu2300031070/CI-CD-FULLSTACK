@@ -1,77 +1,63 @@
-import React, { useState } from 'react';
-import { TextField, Button, Card, CardContent, Typography, Box } from '@mui/material';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { useAuth } from '../contextapi/AuthContext'; // Import context
-import { useNavigate } from 'react-router-dom'; // Navigation
+import React, { useState } from 'react'
+import { TextField, Button, Card, CardContent, Typography, Box } from '@mui/material'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import axios from 'axios'
+import { useAuth } from '../contextapi/AuthContext' // Your context
+import { useNavigate, Link } from 'react-router-dom'
+import config from './config'
 
 export default function BloodLogin() {
-  const [loginData, setLoginData] = useState({ username: '', password: '' });
-  const { setIsBloodBankLoggedIn, setIsHospitalLoggedIn, setIsOrganBankLoggedIn } = useAuth();
-  const navigate = useNavigate();
+  const [loginData, setLoginData] = useState({ username: '', password: '' })
+  const { setIsBloodBankLoggedIn, setIsHospitalLoggedIn, setIsOrganBankLoggedIn } = useAuth()
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
-    setLoginData({ ...loginData, [e.target.name]: e.target.value });
-  };
-
+    setLoginData({ ...loginData, [e.target.name]: e.target.value })
+  }
+  const baseUrl = `${config.url}`;
   const handleLogin = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    console.log("Login Data:", loginData); // Check the login data being submitted
-    
-    if (loginData.username === 'bank' && loginData.password === 'bank123') {
-      toast.success('Login successful!');
+    try {
+      const res = await axios.post(`${baseUrl}/checkbloodbanklogin`, loginData)
 
-      // ✅ Store user info and update context
-      sessionStorage.setItem('Blood_user', JSON.stringify({ username: loginData.username }));  // Mock user data
-      sessionStorage.setItem('isBloodBankLoggedIn', 'true');
-      sessionStorage.setItem('isHospitalLoggedIn', 'false');
-      sessionStorage.setItem('isOrganBankLoggedIn', 'false');
+      // Assuming backend returns the BloodBank object on successful login
+      if (res.status === 200 && res.data) {
+        toast.success('Login successful!')
 
-      setIsBloodBankLoggedIn(true);
-      setIsHospitalLoggedIn(false);
-      setIsOrganBankLoggedIn(false);
+        sessionStorage.setItem('Blood_user', JSON.stringify(res.data))
+        sessionStorage.setItem('isBloodBankLoggedIn', 'true')
+        sessionStorage.setItem('isHospitalLoggedIn', 'false')
+        sessionStorage.setItem('isOrganBankLoggedIn', 'false')
 
-     
+        setIsBloodBankLoggedIn(true)
+        setIsHospitalLoggedIn(false)
+        setIsOrganBankLoggedIn(false)
 
-      // Navigate to blood registration page
-      setTimeout(() => {
-        navigate('/bloodregistrartion');
-      }, 1500);
-    } else {
-      toast.error('Invalid credentials!');
-      console.log('Invalid login attempt');
+        setTimeout(() => {
+          navigate('/bloodregistrartion') // Make sure this route matches your actual route
+        }, 1500)
+      }
+    } catch (err) {
+      console.error('Login error:', err)
+
+      if (err.response && err.response.status === 401) {
+        toast.error('Invalid username or password!')
+      } else {
+        toast.error('Server error during login, please try again later.')
+      }
     }
-
-    // Uncomment this code if you're actually sending a request to the backend
-    /*
-    const response = await axios.post('http://localhost:5000/api/login', loginData);
-    if (response.data.success) {
-      toast.success('Login successful!');
-      sessionStorage.setItem('Blood_user', JSON.stringify(response.data.user));
-      sessionStorage.setItem('isBloodBankLoggedIn', 'true');
-      sessionStorage.setItem('isHospitalLoggedIn', 'false');
-      sessionStorage.setItem('isOrganBankLoggedIn', 'false');
-
-      setIsBloodBankLoggedIn(true);
-      setIsHospitalLoggedIn(false);
-      setIsOrganBankLoggedIn(false);
-
-      setTimeout(() => {
-        navigate('/bloodregistrartion');
-      }, 1500);
-    } else {
-      toast.error('Invalid credentials!');
-    }
-    */
-  };
+  }
 
   return (
     <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <Card className="shadow" style={{ maxWidth: 400, width: '100%' }}>
         <CardContent>
-          <Typography variant="h5" className="mb-4 text-center">Blood Bank Login</Typography>
+          <Typography variant="h5" className="mb-4 text-center">
+            Blood Bank Login
+          </Typography>
           <form onSubmit={handleLogin}>
             <Box display="flex" flexDirection="column" gap={2}>
               <TextField
@@ -89,12 +75,16 @@ export default function BloodLogin() {
                 onChange={handleChange}
                 required
               />
-              <Button type="submit" variant="contained" color="primary">Login</Button>
+              <Link to="/bloodbankregister">Register here</Link>
+              <Button type="submit" variant="contained" color="primary">
+                Login
+              </Button>
             </Box>
           </form>
         </CardContent>
       </Card>
       <ToastContainer position="top-center" autoClose={3000} />
+     
     </div>
-  );
+  )
 }

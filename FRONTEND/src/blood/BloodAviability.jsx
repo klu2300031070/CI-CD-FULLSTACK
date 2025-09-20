@@ -1,17 +1,32 @@
-import React, { useEffect, useState } from 'react'
+import  { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Card, CardContent, Typography, Grid, CircularProgress } from '@mui/material'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Typography,
+  CircularProgress
+} from '@mui/material'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { LocationOn } from '@mui/icons-material'
+import config from './config'
 
 export default function BloodAviability() {
   const [donors, setDonors] = useState([])
   const [loading, setLoading] = useState(true)
-
+const baseUrl = `${config.url}`;
   useEffect(() => {
-    axios.get('http://localhost:2506/viewallblooddonors') // Corrected API endpoint
+    const bloodUser = JSON.parse(sessionStorage.getItem('Blood_user'))
+    const loggedInOrg = bloodUser?.name
+
+    axios.get(`${baseUrl}/viewallblooddonors`)
       .then((res) => {
-        setDonors(res.data)
+        // Filter donors based on org name match
+        const filteredDonors = res.data.filter((donor) => donor.org === loggedInOrg)
+        setDonors(filteredDonors)
         setLoading(false)
       })
       .catch((err) => {
@@ -21,37 +36,47 @@ export default function BloodAviability() {
   }, [])
 
   return (
-    <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: '90vh' }}>
-      <div className="w-100">
-        <Typography variant="h4" className="text-center mb-4">
-          Available Blood Donors
-        </Typography>
+    <div className="container mt-5">
+      <Typography variant="h4" className="text-center mb-4">
+         Blood Donors Records
+      </Typography>
 
-        {loading ? (
-          <div className="d-flex justify-content-center">
-            <CircularProgress />
-          </div>
-        ) : (
-          <Grid container spacing={3} justifyContent="center">
-            {donors.map((donor, idx) => (
-              <Grid item xs={12} sm={6} md={4} key={idx}>
-                <Card className="shadow-sm" sx={{ borderRadius: 3, transition: '0.3s', '&:hover': { boxShadow: 6 } }}>
-                  <CardContent>
-                    <Typography variant="h6" className="mb-2">
-                      {donor.fullName}
-                    </Typography>
-                    <Typography><strong>Gender:</strong> {donor.gender}</Typography>
-                    <Typography><strong>Blood Type:</strong> {donor.bloodType}</Typography>
-                    <Typography><strong>Organization:</strong> {donor.org}</Typography>
-                    <Typography><strong>Phone:</strong> {donor.phoneno}</Typography>
-                    <Typography><strong>Location:</strong> {donor.location}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        )}
-      </div>
+      {loading ? (
+        <div className="d-flex justify-content-center">
+          <CircularProgress />
+        </div>
+      ) : donors.length === 0 ? (
+        <Typography variant="body1" align="center">
+          No donors found for your organization.
+        </Typography>
+      ) : (
+        <TableContainer component={Paper} elevation={3}>
+          <Table>
+            <TableHead style={{ backgroundColor: '#f0f0f0' }}>
+              <TableRow>
+                <TableCell><strong>Name</strong></TableCell>
+                <TableCell><strong>Gender</strong></TableCell>
+                <TableCell><strong>Blood Type</strong></TableCell>
+                <TableCell><strong>Phone</strong></TableCell>
+                <TableCell><strong>Age</strong></TableCell>
+                
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {donors.map((donor, idx) => (
+                <TableRow key={idx}>
+                  <TableCell>{donor.fullName}</TableCell>
+                  <TableCell>{donor.gender}</TableCell>
+                  <TableCell>{donor.bloodType}</TableCell>
+                  <TableCell>{donor.phoneno}</TableCell>
+                  <TableCell>{donor.age}</TableCell>
+                  
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </div>
   )
 }
