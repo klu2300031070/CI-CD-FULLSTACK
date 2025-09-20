@@ -7,7 +7,7 @@ import com.kelf.devops.model.Admin;
 
 
 @Repository
-public interface AdminRepository extends JpaRepository<Admin,String>
+public interface AdminRepository extends JpaRepository<Admin,Integer>
 {
   public Admin findByUsernameAndPassword(String username, String password);  
 }
